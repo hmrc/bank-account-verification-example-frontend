@@ -14,22 +14,26 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.bankaccountverificationexamplefrontend.views
+package uk.gov.hmrc.bankaccountverificationexamplefrontend
 
-import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.footer.FooterItem
+import javax.inject.Inject
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 
-object FooterLinks {
-  def apply()(implicit messages: Messages, appConfig: AppConfig): Seq[FooterItem] = appConfig.footerLinkItems.flatMap { item =>
-    val keyPrefix = s"footer.$item"
-    val textKey = s"$keyPrefix.text"
-    val urlKey = s"$keyPrefix.url"
-    if (
-      messages.isDefinedAt(textKey) && messages.isDefinedAt(urlKey)
-    ) Some(FooterItem(
-      text = Some(messages(textKey)),
-      href = Some(messages(urlKey))
-    )) else None
+import scala.concurrent.{ExecutionContext, Future}
+
+class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
+
+  def init(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[String]] = {
+    import HttpReads.Implicits.readRaw
+
+    val url = s"${appConfig.bavfBaseUrl}/api/init"
+    httpClient.POSTEmpty[HttpResponse](url).map {
+      case r if r.status == 200 =>
+        Some(r.json.as[String])
+      case _ =>
+        None
+    }
   }
+
 }

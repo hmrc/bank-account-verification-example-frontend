@@ -1,12 +1,25 @@
-service.name = bank-account-verification-example-frontend
-service.homePageUrl = /bank-account-verification-example-frontend
-service.text = This is your new service
+service.name = IM IN UR BANKS REFUNDNIG U CASHMONEYS
+service.homePageUrl = /bank-account-verification-example-frontend/example
+service.text = Click start to begin entering bank account details
+service.header = PLS GIEF DETAILZ
 
-footer.cookies.text = Cookies
+footer.cookies.text = CAN
 footer.cookies.url = /help/cookies
-footer.privacy.text = Privacy policy
+footer.privacy.text = HAZ
 footer.privacy.url = /help/privacy
-footer.termsConditions.text = Terms and conditions
+footer.termsConditions.text = KTHX
 footer.termsConditions.url = /help/terms-and-conditions
-footer.govukHelp.text = Help using GOV.UK
+footer.govukHelp.text = BAII
 footer.govukHelp.url = https://www.gov.uk/help
+
+label.accountName = NAEM
+label.sortCode = CODEZ
+label.accountNumber = ACCOUNTNOMBRE
+label.rollNumber = ROALNOMBOR
+label.submitLabel = GOOOOO
+
+hint.sortCode = SIIXX
+hint.accountNumber = SIXEIIIHT
+hint.rollNumber = NOT BREAD LOLZ
+
+label.start = Start

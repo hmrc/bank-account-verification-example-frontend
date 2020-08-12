@@ -2,5 +2,6 @@
 
 ->         /govuk-frontend          govuk.Routes
 ->         /hmrc-frontend           hmrcfrontend.Routes
-GET        /hello-world             uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers.HelloWorldController.helloWorld
+GET        /example                 uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers.ExampleController.example
+POST       /transfer                uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers.ExampleController.transfer
 GET        /assets/*file            controllers.Assets.versioned(path = "/public", file: Asset)
