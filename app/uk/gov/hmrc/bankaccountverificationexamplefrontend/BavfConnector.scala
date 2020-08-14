@@ -17,6 +17,7 @@
 package uk.gov.hmrc.bankaccountverificationexamplefrontend
 
 import javax.inject.Inject
+import play.api.libs.json.{Json, Reads, Writes}
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 
@@ -26,9 +27,13 @@ class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
 
   def init(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[String]] = {
     import HttpReads.Implicits.readRaw
+    import InitRequest.writes
+
+    val continueUrl = s"${appConfig.bavfExampleBaseUrl}/bank-account-verification-example-frontend/done"
+    val customisationsUrl = s"${appConfig.bavfExampleBaseUrl}/bank-account-verification"
 
     val url = s"${appConfig.bavfApiBaseUrl}/api/init"
-    httpClient.POSTEmpty[HttpResponse](url).map {
+    httpClient.POST[InitRequest, HttpResponse](url, InitRequest(continueUrl, Some(customisationsUrl))).map {
       case r if r.status == 200 =>
         Some(r.json.as[String])
       case _ =>
@@ -36,4 +41,56 @@ class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
     }
   }
 
+  def complete(journeyId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[CompleteResponse]] = {
+    import HttpReads.Implicits.readRaw
+    import CompleteResponse.reads
+
+    val url = s"${appConfig.bavfApiBaseUrl}/api/complete/$journeyId"
+    httpClient.GET[HttpResponse](url).map {
+      case r if r.status == 200 =>
+        Some(r.json.as[CompleteResponse])
+      case _ =>
+        None
+    }
+  }
+}
+
+case class InitRequest(continueUrl: String, customisationsUrl: Option[String])
+
+object InitRequest {
+  implicit val writes: Writes[InitRequest] = Json.writes[InitRequest]
+}
+
+case class CompleteResponse(accountName: String,
+                            sortCode: String,
+                            accountNumber: String,
+                            accountNumberWithSortCodeIsValid: ReputationResponseEnum,
+                            rollNumber: Option[String] = None)
+
+object CompleteResponse {
+  implicit val reads: Reads[CompleteResponse] = Json.reads[CompleteResponse]
+}
+
+sealed trait ReputationResponseEnum
+
+object ReputationResponseEnum extends Enumerable.Implicits {
+
+  case object Yes extends WithName("yes") with ReputationResponseEnum
+
+  case object No extends WithName("no") with ReputationResponseEnum
+
+  case object Indeterminate extends WithName("indeterminate") with ReputationResponseEnum
+
+  case object Inapplicable extends WithName("inapplicable") with ReputationResponseEnum
+
+  case object Error extends WithName("error") with ReputationResponseEnum
+
+  val values: Seq[ReputationResponseEnum] = Seq(Yes, No, Indeterminate, Inapplicable, Error)
+
+  implicit val enumerable: Enumerable[ReputationResponseEnum] =
+    Enumerable(values.map(v => v.toString -> v): _*)
+}
+
+class WithName(string: String) {
+  override val toString: String = string
 }

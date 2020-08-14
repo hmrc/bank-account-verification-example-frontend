@@ -25,5 +25,6 @@ class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig)
   val footerLinkItems: Seq[String] = config.getOptional[Seq[String]]("footerLinkItems").getOrElse(Seq())
 
   val bavfApiBaseUrl = servicesConfig.baseUrl("bank-account-verification-api")
-  val bavfWebApiBaseUrl = servicesConfig.baseUrl("bank-account-verification-web")
+  val bavfWebBaseUrl = servicesConfig.baseUrl("bank-account-verification-web")
+  val bavfExampleBaseUrl = servicesConfig.baseUrl("bank-account-verification-example-frontend")
 }

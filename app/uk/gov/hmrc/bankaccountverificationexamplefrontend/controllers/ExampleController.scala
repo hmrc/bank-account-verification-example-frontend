@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.mvc._
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.BavfConnector
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
-import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html.ExamplePage
+import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html.{DonePage, StartPage}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.Future
@@ -30,23 +30,30 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class ExampleController @Inject()(appConfig: AppConfig,
                                   connector: BavfConnector,
                                   mcc: MessagesControllerComponents,
-                                  examplePage: ExamplePage)
+                                  startPage: StartPage,
+                                  donePage: DonePage)
   extends FrontendController(mcc) {
 
   implicit val config: AppConfig = appConfig
 
-  val example: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(examplePage()))
+  val start: Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(Ok(startPage()))
   }
 
   val transfer: Action[AnyContent] = Action.async { implicit request =>
     connector.init.map {
       case Some(journeyId) =>
-        val redirectUrl = s"${appConfig.bavfWebApiBaseUrl}/bank-account-verification/start/$journeyId"
+        val redirectUrl = s"${appConfig.bavfWebBaseUrl}/bank-account-verification/start/$journeyId"
         SeeOther(redirectUrl)
       case None =>
         InternalServerError
     }
   }
 
+  def done(journeyId: String): Action[AnyContent] = Action.async { implicit request =>
+    connector.complete(journeyId).map {
+      case Some(r) => Ok(donePage(r))
+      case None => InternalServerError
+    }
+  }
 }
