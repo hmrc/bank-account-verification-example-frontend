@@ -7,6 +7,7 @@ import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
+import uk.gov.hmrc.bankaccountverificationexamplefrontend.BavfConnector
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
@@ -21,9 +22,10 @@ class ExampleControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPe
   private val serviceConfig = new ServicesConfig(configuration)
   private val appConfig     = new AppConfig(configuration, serviceConfig)
 
-  val helloWorldPage: ExamplePage = app.injector.instanceOf[ExamplePage]
+  val examplePage: ExamplePage = app.injector.instanceOf[ExamplePage]
+  val connector: BavfConnector = app.injector.instanceOf[BavfConnector]
 
-  private val controller = new ExampleController(appConfig, stubMessagesControllerComponents(), helloWorldPage)
+  private val controller = new ExampleController(appConfig, connector, stubMessagesControllerComponents(), examplePage)
 
   "GET /" should {
     "return 200" in {
