@@ -24,5 +24,6 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
   val footerLinkItems: Seq[String] = config.getOptional[Seq[String]]("footerLinkItems").getOrElse(Seq())
 
-  val bavfBaseUrl = servicesConfig.baseUrl("bank-account-verification")
+  val bavfApiBaseUrl = servicesConfig.baseUrl("bank-account-verification-api")
+  val bavfWebApiBaseUrl = servicesConfig.baseUrl("bank-account-verification-web")
 }

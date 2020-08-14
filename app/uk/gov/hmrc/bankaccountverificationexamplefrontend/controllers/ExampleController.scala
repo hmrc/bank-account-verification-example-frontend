@@ -42,7 +42,7 @@ class ExampleController @Inject()(appConfig: AppConfig,
   val transfer: Action[AnyContent] = Action.async { implicit request =>
     connector.init.map {
       case Some(journeyId) =>
-        val redirectUrl = s"${appConfig.bavfBaseUrl}/bank-account-verification/start/$journeyId"
+        val redirectUrl = s"${appConfig.bavfWebApiBaseUrl}/bank-account-verification/start/$journeyId"
         SeeOther(redirectUrl)
       case None =>
         InternalServerError

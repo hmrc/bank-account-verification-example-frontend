@@ -27,7 +27,7 @@ class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
   def init(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[String]] = {
     import HttpReads.Implicits.readRaw
 
-    val url = s"${appConfig.bavfBaseUrl}/api/init"
+    val url = s"${appConfig.bavfApiBaseUrl}/api/init"
     httpClient.POSTEmpty[HttpResponse](url).map {
       case r if r.status == 200 =>
         Some(r.json.as[String])
