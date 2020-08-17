@@ -29,8 +29,8 @@ class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
     import HttpReads.Implicits.readRaw
     import InitRequest.writes
 
-    val continueUrl = s"${appConfig.bavfExampleBaseUrl}/bank-account-verification-example-frontend/done"
-    val customisationsUrl = s"${appConfig.bavfExampleBaseUrl}/bank-account-verification"
+    val continueUrl = s"${appConfig.exampleExternalUrl}/bank-account-verification-example-frontend/done"
+    val customisationsUrl = s"${appConfig.exampleInternalUrl}/bank-account-verification"
 
     val url = s"${appConfig.bavfApiBaseUrl}/api/init"
     httpClient.POST[InitRequest, HttpResponse](url, InitRequest(continueUrl, Some(customisationsUrl))).map {

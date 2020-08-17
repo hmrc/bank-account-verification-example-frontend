@@ -26,5 +26,7 @@ class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig)
 
   val bavfApiBaseUrl = servicesConfig.baseUrl("bank-account-verification-api")
   val bavfWebBaseUrl = servicesConfig.baseUrl("bank-account-verification-web")
-  val bavfExampleBaseUrl = servicesConfig.baseUrl("bank-account-verification-example-frontend")
+
+  val exampleInternalUrl = servicesConfig.baseUrl("bank-account-verification-example-frontend.internal")
+  val exampleExternalUrl = servicesConfig.baseUrl("bank-account-verification-example-frontend.external")
 }
