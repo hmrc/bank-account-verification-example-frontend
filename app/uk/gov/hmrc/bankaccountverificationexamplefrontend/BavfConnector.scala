@@ -17,7 +17,8 @@
 package uk.gov.hmrc.bankaccountverificationexamplefrontend
 
 import javax.inject.Inject
-import play.api.libs.json.{Json, Reads, Writes}
+import play.api.libs.json._
+import play.twirl.api.Html
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 
@@ -25,15 +26,20 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
 
-  def init(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[String]] = {
+  def init(continueUrl: String, headerHtml: Option[Html] = None, beforeContentHtml: Option[Html] = None, footerHtml: Option[Html] = None, messages: Option[InitRequestMessages] = None)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[String]] = {
     import HttpReads.Implicits.readRaw
     import InitRequest.writes
 
-    val continueUrl = s"${appConfig.exampleExternalUrl}/bank-account-verification-example-frontend/done"
-    val customisationsUrl = s"${appConfig.exampleInternalUrl}/bank-account-verification"
+    val request = InitRequest(
+      "bank-account-verification-example-frontend",
+      continueUrl,
+      headerHtml = headerHtml.map(_.toString()),
+      beforeContentHtml = beforeContentHtml.map(_.toString()),
+      footerHtml = footerHtml.map(_.toString()),
+      messages = messages)
 
     val url = s"${appConfig.bavfApiBaseUrl}/api/init"
-    httpClient.POST[InitRequest, HttpResponse](url, InitRequest(continueUrl, Some(customisationsUrl))).map {
+    httpClient.POST[InitRequest, HttpResponse](url, request).map {
       case r if r.status == 200 =>
         Some(r.json.as[String])
       case _ =>
@@ -42,8 +48,8 @@ class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
   }
 
   def complete(journeyId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[CompleteResponse]] = {
-    import HttpReads.Implicits.readRaw
     import CompleteResponse.reads
+    import HttpReads.Implicits.readRaw
 
     val url = s"${appConfig.bavfApiBaseUrl}/api/complete/$journeyId"
     httpClient.GET[HttpResponse](url).map {
@@ -55,9 +61,17 @@ class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
   }
 }
 
-case class InitRequest(continueUrl: String, customisationsUrl: Option[String])
+case class InitRequest(serviceIdentifier: String,
+                       continueUrl: String,
+                       messages: Option[InitRequestMessages] = None,
+                       headerHtml: Option[String] = None,
+                       beforeContentHtml: Option[String] = None,
+                       footerHtml: Option[String] = None)
+
+case class InitRequestMessages(en: JsObject, cy: Option[JsObject] = None)
 
 object InitRequest {
+  implicit val messagesWrites: OWrites[InitRequestMessages] = Json.writes[InitRequestMessages]
   implicit val writes: Writes[InitRequest] = Json.writes[InitRequest]
 }
 

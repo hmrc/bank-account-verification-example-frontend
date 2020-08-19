@@ -18,6 +18,7 @@ package uk.gov.hmrc.bankaccountverificationexamplefrontend.config
 
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
+import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.{Cy, En, Language}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
@@ -27,6 +28,11 @@ class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig)
   val bavfApiBaseUrl = servicesConfig.baseUrl("bank-account-verification-api")
   val bavfWebBaseUrl = servicesConfig.baseUrl("bank-account-verification-web")
 
-  val exampleInternalUrl = servicesConfig.baseUrl("bank-account-verification-example-frontend.internal")
-  val exampleExternalUrl = servicesConfig.baseUrl("bank-account-verification-example-frontend.external")
+  val exampleExternalUrl = servicesConfig.baseUrl("bank-account-verification-example-frontend")
+
+  def langToLanguage(langCode: String): Language = langCode match {
+    case "en" ⇒ En
+    case "cy" ⇒ Cy
+    case _ => En
+  }
 }

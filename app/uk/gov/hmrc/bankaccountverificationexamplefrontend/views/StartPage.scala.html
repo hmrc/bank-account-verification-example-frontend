@@ -16,19 +16,24 @@
 
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
 
-@this(layout: Layout, form: FormWithCSRF, govukButton: GovukButton)
+@this(layout: Layout, form: FormWithCSRF, govukButton: GovukButton, help: HmrcReportTechnicalIssue)
 
-@()(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(action: Call, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some("bank-account-verification-example-frontend")) {
+@layout(pageTitle = Some("bank-account-verification-example-frontend"), beforeContentBlock) {
     <h1 class="govuk-heading-xl">@messages("service.name")</h1>
     <p class="govuk-body">@{
         messages("service.example.text")
     }</p>
 
-    @form(uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers.routes.ExampleController.transfer) {
+    @form(action) {
         @govukButton(Button(content = HtmlContent(messages("label.start")),
             name = Some("start"),
             inputType = Some("submit"), attributes = Map("id" → "start")))
     }
+
+    @help(ReportTechnicalIssue(
+        serviceCode = "bank-account-verification-example-frontend",
+        language = Some(messages.lang.language)
+    ))
 }

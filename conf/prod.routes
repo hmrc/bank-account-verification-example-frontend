@@ -2,7 +2,4 @@
 ->         /bank-account-verification-example-frontend     app.Routes
 ->         /                                               health.Routes
 
-GET        /bank-account-verification/header               uk.gov.hmrc.bankaccountverificationexamplefrontend.bavf.CustomisationsController.header
-GET        /bank-account-verification/footer               uk.gov.hmrc.bankaccountverificationexamplefrontend.bavf.CustomisationsController.footer
-GET        /bank-account-verification/messages             uk.gov.hmrc.bankaccountverificationexamplefrontend.bavf.CustomisationsController.messages
 GET        /admin/metrics                                  com.kenshoo.play.metrics.MetricsController.metrics

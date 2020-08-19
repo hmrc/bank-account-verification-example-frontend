@@ -17,10 +17,10 @@
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.CompleteResponse
 
-@this(layout: Layout, summary: GovukSummaryList)
-@(response: CompleteResponse)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@this(layout: Layout, summary: GovukSummaryList, help: HmrcReportTechnicalIssue)
+@(response: CompleteResponse, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some("bank-account-verification-example-frontend")) {
+@layout(pageTitle = Some("bank-account-verification-example-frontend"), beforeContentBlock) {
     <h1 class="govuk-heading-xl">@messages("service.name")</h1>
     <p class="govuk-heading-m">@{
         messages("service.done.text")
@@ -34,5 +34,10 @@
             SummaryListRow(Key(HtmlContent("Roll number")), Value(HtmlContent(response.rollNumber.getOrElse("")))),
             SummaryListRow(Key(HtmlContent("Validation result")), Value(HtmlContent(response.accountNumberWithSortCodeIsValid.toString)))
         )
+    ))
+
+    @help(ReportTechnicalIssue(
+        serviceCode = "bank-account-verification-example-frontend",
+        language = Some(messages.lang.language)
     ))
 }
