@@ -18,7 +18,6 @@ package uk.gov.hmrc.bankaccountverificationexamplefrontend
 
 import javax.inject.Inject
 import play.api.libs.json._
-import play.twirl.api.Html
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 
@@ -26,17 +25,15 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
 
-  def init(continueUrl: String, headerHtml: Option[Html] = None, beforeContentHtml: Option[Html] = None, footerHtml: Option[Html] = None, messages: Option[InitRequestMessages] = None)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[String]] = {
+  def init(continueUrl: String, messages: Option[InitRequestMessages] = None, customisationsUrl: Option[String] = None)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[String]] = {
     import HttpReads.Implicits.readRaw
     import InitRequest.writes
 
     val request = InitRequest(
       "bank-account-verification-example-frontend",
       continueUrl,
-      headerHtml = headerHtml.map(_.toString()),
-      beforeContentHtml = beforeContentHtml.map(_.toString()),
-      footerHtml = footerHtml.map(_.toString()),
-      messages = messages)
+      messages,
+      customisationsUrl)
 
     val url = s"${appConfig.bavfApiBaseUrl}/api/init"
     httpClient.POST[InitRequest, HttpResponse](url, request).map {
@@ -64,9 +61,7 @@ class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
 case class InitRequest(serviceIdentifier: String,
                        continueUrl: String,
                        messages: Option[InitRequestMessages] = None,
-                       headerHtml: Option[String] = None,
-                       beforeContentHtml: Option[String] = None,
-                       footerHtml: Option[String] = None)
+                       customisationsUrl: Option[String] = None)
 
 case class InitRequestMessages(en: JsObject, cy: Option[JsObject] = None)
 

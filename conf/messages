@@ -18,4 +18,5 @@ footer.govukHelp.url = https://www.gov.uk/help
 footer.accessibility.text = Accessibility Statement
 footer.accessibility.url = /bank-account-verification-example-frontend/accessibility
 
+betaBanner.content = This is a new service – your <a id='beta-banner-feedback' href='/feedback'>feedback</a> will help us to improve it.
 bavf.service.header = Enter your bank account details

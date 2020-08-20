@@ -2,6 +2,7 @@
 
 ->          /govuk-frontend                  govuk.Routes
 ->          /hmrc-frontend                   hmrcfrontend.Routes
+GET         /language/:lang                  uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers.ExampleLanguageController.switchToLanguage(lang: String)
 GET         /start                           uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers.ExampleController.start
 POST        /transfer                        uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers.ExampleController.transfer
 GET         /done/:journeyId                 uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers.ExampleController.done(journeyId)

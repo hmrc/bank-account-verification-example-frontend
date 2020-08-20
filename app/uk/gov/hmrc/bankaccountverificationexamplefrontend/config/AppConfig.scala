@@ -28,7 +28,8 @@ class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig)
   val bavfApiBaseUrl = servicesConfig.baseUrl("bank-account-verification-api")
   val bavfWebBaseUrl = servicesConfig.baseUrl("bank-account-verification-web")
 
-  val exampleExternalUrl = servicesConfig.baseUrl("bank-account-verification-example-frontend")
+  val exampleExternalUrl = servicesConfig.baseUrl("bank-account-verification-example-frontend.external")
+  val exampleInternalUrl = servicesConfig.baseUrl("bank-account-verification-example-frontend.internal")
 
   def langToLanguage(langCode: String): Language = langCode match {
     case "en" ⇒ En

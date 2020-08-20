@@ -17,12 +17,12 @@
 package uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.i18n.Messages
+import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc._
+import uk.gov.hmrc.bankaccountverificationexamplefrontend.{BavfConnector, InitRequestMessages}
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html._
-import uk.gov.hmrc.bankaccountverificationexamplefrontend.{BavfConnector, InitRequestMessages}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -32,9 +32,7 @@ import scala.concurrent.Future
 class AdvancedExampleController @Inject()(appConfig: AppConfig,
                                           connector: BavfConnector,
                                           mcc: MessagesControllerComponents,
-                                          headerBlock: HeaderBlock,
                                           beforeContentBlock: BeforeContentBlock,
-                                          footerBlock: FooterBlock,
                                           startPage: StartPage,
                                           donePage: DonePage)
   extends FrontendController(mcc) {
@@ -49,8 +47,9 @@ class AdvancedExampleController @Inject()(appConfig: AppConfig,
 
   val transfer: Action[AnyContent] = Action.async { implicit request =>
     val continueUrl = s"${appConfig.exampleExternalUrl}/bank-account-verification-example-frontend/advanced/done"
+    val customisationsUrl = s"${appConfig.exampleInternalUrl}/bank-account-verification"
 
-    connector.init(continueUrl, Some(headerBlock()), Some(beforeContentBlock()), Some(footerBlock()), requestMessages).map {
+    connector.init(continueUrl, requestMessages, Some(customisationsUrl)).map {
       case Some(journeyId) =>
         val redirectUrl = s"${appConfig.bavfWebBaseUrl}/bank-account-verification/start/$journeyId"
         SeeOther(redirectUrl)
@@ -67,14 +66,20 @@ class AdvancedExampleController @Inject()(appConfig: AppConfig,
     }
   }
 
-  private def accessibilityUrl(implicit messages: Messages) =
-    s"${appConfig.exampleExternalUrl}${messages("footer.accessibility.url")}"
+  private def requestMessages(implicit messagesApi: MessagesApi) = {
+    val english = messagesApi.preferred(Seq(Lang("en")))
+    val welsh  = messagesApi.preferred(Seq(Lang("cy")))
 
-  private def requestMessages(implicit messages: Messages) = {
-    Some(InitRequestMessages(Json.obj(
-      "service.name" -> messages("service.name"),
-      "service.header" -> messages("bavf.service.header"),
-      "footer.accessibility.url" -> s"${appConfig.exampleExternalUrl}${messages("footer.accessibility.url")}"
-    )))
+    Some(InitRequestMessages(
+      en = Json.obj(
+        "service.name" -> english("service.name"),
+        "service.header" -> english("bavf.service.header"),
+        "footer.accessibility.url" -> s"${appConfig.exampleExternalUrl}${english("footer.accessibility.url")}"
+      ),
+      cy = Some(Json.obj(
+        "service.name" -> welsh("service.name"),
+        "service.header" -> welsh("bavf.service.header"),
+        "footer.accessibility.url" -> s"${appConfig.exampleExternalUrl}${welsh("footer.accessibility.url")}"
+      ))))
   }
 }
