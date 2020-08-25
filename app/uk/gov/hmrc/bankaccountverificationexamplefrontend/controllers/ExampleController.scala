@@ -20,9 +20,15 @@ import javax.inject.{Inject, Singleton}
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc._
-import uk.gov.hmrc.bankaccountverificationexamplefrontend.{BavfConnector, InitRequestMessages}
+import uk.gov.hmrc.bankaccountverificationexamplefrontend.{
+  BavfConnector,
+  InitRequestMessages
+}
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
-import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html.{DonePage, StartPage}
+import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html.{
+  DonePage,
+  StartPage
+}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.Future
@@ -34,46 +40,60 @@ class ExampleController @Inject()(appConfig: AppConfig,
                                   mcc: MessagesControllerComponents,
                                   startPage: StartPage,
                                   donePage: DonePage)
-  extends FrontendController(mcc) {
+    extends FrontendController(mcc) {
 
   implicit val config: AppConfig = appConfig
 
   val start: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(startPage(
-      action = uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers.routes.ExampleController.transfer)))
+    Future.successful(
+      Ok(
+        startPage(
+          action =
+            uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers.routes.ExampleController.transfer
+        )
+      )
+    )
   }
 
   val transfer: Action[AnyContent] = Action.async { implicit request =>
-    val continueUrl = s"${appConfig.exampleExternalUrl}/bank-account-verification-example-frontend/done"
+    val continueUrl =
+      s"${appConfig.exampleExternalUrl}/bank-account-verification-example-frontend/done"
 
     connector.init(continueUrl, messages = requestMessages).map {
       case Some(journeyId) =>
-        val redirectUrl = s"${appConfig.bavfWebBaseUrl}/bank-account-verification/start/$journeyId"
+        val redirectUrl =
+          s"${appConfig.bavfWebBaseUrl}/bank-account-verification/start/$journeyId"
         SeeOther(redirectUrl)
       case None =>
         InternalServerError
     }
   }
 
-  def done(journeyId: String): Action[AnyContent] = Action.async { implicit request =>
-    connector.complete(journeyId).map {
-      case Some(r) => Ok(donePage(r))
-      case None => InternalServerError
-    }
+  def done(journeyId: String): Action[AnyContent] = Action.async {
+    implicit request =>
+      connector.complete(journeyId).map {
+        case Some(r) => Ok(donePage(r))
+        case None    => InternalServerError
+      }
   }
 
   private def requestMessages(implicit messagesApi: MessagesApi) = {
     val english = messagesApi.preferred(Seq(Lang("en")))
-    val welsh  = messagesApi.preferred(Seq(Lang("cy")))
-
-    Some(InitRequestMessages(
-      en = Json.obj(
-        "service.name" -> english("service.name"),
-        "footer.accessibility.url" -> s"${appConfig.exampleExternalUrl}${english("footer.accessibility.url")}"
-      ),
-      cy = Some(Json.obj(
-        "service.name" -> welsh("service.name"),
-        "footer.accessibility.url" -> s"${appConfig.exampleExternalUrl}${welsh("footer.accessibility.url")}"
-      ))))
+    val welsh = messagesApi.preferred(Seq(Lang("cy")))
+    Some(
+      InitRequestMessages(
+        en = Json.obj(
+          "service.name" -> english("service.name"),
+          "footer.accessibility.url" -> s"${appConfig.exampleExternalUrl}${english("footer.accessibility.url")}"
+        ),
+        cy = Some(
+          Json.obj(
+            "service.name" -> welsh("service.name"),
+            "footer.accessibility.url" -> s"${appConfig.exampleExternalUrl}${welsh("footer.accessibility.url")}",
+            "phaseBanner.tag" -> "BETA"
+          )
+        )
+      )
+    )
   }
 }

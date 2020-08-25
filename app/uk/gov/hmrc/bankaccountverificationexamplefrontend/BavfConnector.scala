@@ -25,7 +25,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
 
-  def init(continueUrl: String, messages: Option[InitRequestMessages] = None, customisationsUrl: Option[String] = None)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[String]] = {
+  def init(continueUrl: String,
+           messages: Option[InitRequestMessages] = None,
+           customisationsUrl: Option[String] = None)(
+    implicit ec: ExecutionContext,
+    hc: HeaderCarrier
+  ): Future[Option[String]] = {
     import HttpReads.Implicits.readRaw
     import InitRequest.writes
 
@@ -33,7 +38,8 @@ class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
       "bank-account-verification-example-frontend",
       continueUrl,
       messages,
-      customisationsUrl)
+      customisationsUrl
+    )
 
     val url = s"${appConfig.bavfApiBaseUrl}/api/init"
     httpClient.POST[InitRequest, HttpResponse](url, request).map {
@@ -44,7 +50,10 @@ class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
     }
   }
 
-  def complete(journeyId: String)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Option[CompleteResponse]] = {
+  def complete(journeyId: String)(
+    implicit ec: ExecutionContext,
+    hc: HeaderCarrier
+  ): Future[Option[CompleteResponse]] = {
     import CompleteResponse.reads
     import HttpReads.Implicits.readRaw
 
@@ -66,15 +75,19 @@ case class InitRequest(serviceIdentifier: String,
 case class InitRequestMessages(en: JsObject, cy: Option[JsObject] = None)
 
 object InitRequest {
-  implicit val messagesWrites: OWrites[InitRequestMessages] = Json.writes[InitRequestMessages]
+  implicit val messagesWrites: OWrites[InitRequestMessages] =
+    Json.writes[InitRequestMessages]
   implicit val writes: Writes[InitRequest] = Json.writes[InitRequest]
 }
 
-case class CompleteResponse(accountName: String,
-                            sortCode: String,
-                            accountNumber: String,
-                            accountNumberWithSortCodeIsValid: ReputationResponseEnum,
-                            rollNumber: Option[String] = None)
+case class CompleteResponse(
+  accountType: String,
+  accountName: String,
+  sortCode: String,
+  accountNumber: String,
+  accountNumberWithSortCodeIsValid: ReputationResponseEnum,
+  rollNumber: Option[String] = None
+)
 
 object CompleteResponse {
   implicit val reads: Reads[CompleteResponse] = Json.reads[CompleteResponse]
@@ -88,13 +101,18 @@ object ReputationResponseEnum extends Enumerable.Implicits {
 
   case object No extends WithName("no") with ReputationResponseEnum
 
-  case object Indeterminate extends WithName("indeterminate") with ReputationResponseEnum
+  case object Indeterminate
+      extends WithName("indeterminate")
+      with ReputationResponseEnum
 
-  case object Inapplicable extends WithName("inapplicable") with ReputationResponseEnum
+  case object Inapplicable
+      extends WithName("inapplicable")
+      with ReputationResponseEnum
 
   case object Error extends WithName("error") with ReputationResponseEnum
 
-  val values: Seq[ReputationResponseEnum] = Seq(Yes, No, Indeterminate, Inapplicable, Error)
+  val values: Seq[ReputationResponseEnum] =
+    Seq(Yes, No, Indeterminate, Inapplicable, Error)
 
   implicit val enumerable: Enumerable[ReputationResponseEnum] =
     Enumerable(values.map(v => v.toString -> v): _*)
