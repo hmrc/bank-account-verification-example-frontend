@@ -17,7 +17,7 @@
 package uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.i18n.Messages
+import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc._
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.{BavfConnector, InitRequestMessages}
@@ -62,10 +62,18 @@ class ExampleController @Inject()(appConfig: AppConfig,
     }
   }
 
-  private def requestMessages(implicit messages: Messages) = {
-    Some(InitRequestMessages(Json.obj(
-      "service.name" -> messages("service.name"),
-      "footer.accessibility.url" -> s"${appConfig.exampleExternalUrl}${messages("footer.accessibility.url")}"
-    )))
+  private def requestMessages(implicit messagesApi: MessagesApi) = {
+    val english = messagesApi.preferred(Seq(Lang("en")))
+    val welsh  = messagesApi.preferred(Seq(Lang("cy")))
+
+    Some(InitRequestMessages(
+      en = Json.obj(
+        "service.name" -> english("service.name"),
+        "footer.accessibility.url" -> s"${appConfig.exampleExternalUrl}${english("footer.accessibility.url")}"
+      ),
+      cy = Some(Json.obj(
+        "service.name" -> welsh("service.name"),
+        "footer.accessibility.url" -> s"${appConfig.exampleExternalUrl}${welsh("footer.accessibility.url")}"
+      ))))
   }
 }
