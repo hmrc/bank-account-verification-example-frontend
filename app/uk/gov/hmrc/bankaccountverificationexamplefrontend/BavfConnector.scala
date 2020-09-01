@@ -54,7 +54,7 @@ class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
     implicit ec: ExecutionContext,
     hc: HeaderCarrier
   ): Future[Option[CompleteResponse]] = {
-    import CompleteResponse.reads
+    import CompleteResponse._
     import HttpReads.Implicits.readRaw
 
     val url = s"${appConfig.bavfApiBaseUrl}/api/complete/$journeyId"
@@ -80,8 +80,15 @@ object InitRequest {
   implicit val writes: Writes[InitRequest] = Json.writes[InitRequest]
 }
 
-case class CompleteResponse(
-  accountType: String,
+case class CompleteResponse(accountType: String,
+                            personal: Option[PersonalCompleteResponse],
+                            business: Option[BusinessCompleteResponse])
+object CompleteResponse {
+  implicit val reads: Reads[CompleteResponse] =
+    Json.reads[CompleteResponse]
+}
+
+case class PersonalCompleteResponse(
   accountName: String,
   sortCode: String,
   accountNumber: String,
@@ -94,8 +101,28 @@ case class CompleteResponse(
   nonStandardAccountDetailsRequiredForBacs: Option[ReputationResponseEnum]
 )
 
-object CompleteResponse {
-  implicit val reads: Reads[CompleteResponse] = Json.reads[CompleteResponse]
+object PersonalCompleteResponse {
+  implicit val reads: Reads[PersonalCompleteResponse] =
+    Json.reads[PersonalCompleteResponse]
+}
+
+case class BusinessCompleteResponse(
+  companyName: String,
+  companyRegistrationNumber: Option[String],
+  sortCode: String,
+  accountNumber: String,
+  rollNumber: Option[String],
+  accountNumberWithSortCodeIsValid: ReputationResponseEnum,
+  accountExists: Option[ReputationResponseEnum],
+  companyNameMatches: ReputationResponseEnum,
+  companyPostCodeMatches: Option[ReputationResponseEnum],
+  companyRegistrationNumberMatches: Option[ReputationResponseEnum],
+  nonStandardAccountDetailsRequiredForBacs: Option[ReputationResponseEnum]
+)
+
+object BusinessCompleteResponse {
+  implicit val completeResponseReads: Reads[BusinessCompleteResponse] =
+    Json.reads[BusinessCompleteResponse]
 }
 
 sealed trait ReputationResponseEnum

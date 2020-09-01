@@ -14,11 +14,11 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.bankaccountverificationexamplefrontend.BusinessCompleteResponse
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
-@import uk.gov.hmrc.bankaccountverificationexamplefrontend.CompleteResponse
 
 @this(layout: Layout, summary: GovukSummaryList, help: HmrcReportTechnicalIssue)
-@(response: CompleteResponse, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(response: BusinessCompleteResponse, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some("bank-account-verification-example-frontend"), beforeContentBlock) {
     <h1 class="govuk-heading-xl">@messages("service.name")</h1>
@@ -28,17 +28,17 @@
 
     @summary(SummaryList(
         rows = Seq(
-            SummaryListRow(Key(HtmlContent("Account Type")), Value(HtmlContent(response.accountType))),
-            SummaryListRow(Key(HtmlContent("Account name")), Value(HtmlContent(response.accountName))),
+            SummaryListRow(Key(HtmlContent("Account Type")), Value(HtmlContent("business"))),
+            SummaryListRow(Key(HtmlContent("Company name")), Value(HtmlContent(response.companyName))),
             SummaryListRow(Key(HtmlContent("Sort code")), Value(HtmlContent(response.sortCode))),
             SummaryListRow(Key(HtmlContent("Account number")), Value(HtmlContent(response.accountNumber))),
             SummaryListRow(Key(HtmlContent("Roll number")), Value(HtmlContent(response.rollNumber.getOrElse("")))),
-            SummaryListRow(Key(HtmlContent("Validation result")), Value(HtmlContent(response.accountNumberWithSortCodeIsValid.toString)))
+            SummaryListRow(Key(HtmlContent("Validation result")), Value(HtmlContent(response.accountNumberWithSortCodeIsValid.toString))),
+            SummaryListRow(Key(HtmlContent("Company name matches")), Value(HtmlContent(response.companyNameMatches.toString))),
+            SummaryListRow(Key(HtmlContent("Company postcode matches")), Value(HtmlContent(response.companyPostCodeMatches.toString))),
+            SummaryListRow(Key(HtmlContent("Company registration number matches")), Value(HtmlContent(response.companyRegistrationNumberMatches.toString)))
         ) ++ Seq(
             response.accountExists.map(v => SummaryListRow(Key(HtmlContent("Account exists")), Value(HtmlContent(v.toString)))),
-            response.nameMatches.map(v => SummaryListRow(Key(HtmlContent("Account name matched")), Value(HtmlContent(v.toString)))),
-            response.nonConsented.map(v => SummaryListRow(Key(HtmlContent("Account non-consented")), Value(HtmlContent(v.toString)))),
-            response.subjectHasDeceased.map(v => SummaryListRow(Key(HtmlContent("Account owner deceased")), Value(HtmlContent(v.toString))))
         ).flatten
     ))
 

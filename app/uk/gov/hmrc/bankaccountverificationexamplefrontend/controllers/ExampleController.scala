@@ -26,7 +26,8 @@ import uk.gov.hmrc.bankaccountverificationexamplefrontend.{
 }
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html.{
-  DonePage,
+  PersonalDonePage,
+  BusinessDonePage,
   StartPage
 }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -39,7 +40,8 @@ class ExampleController @Inject()(appConfig: AppConfig,
                                   connector: BavfConnector,
                                   mcc: MessagesControllerComponents,
                                   startPage: StartPage,
-                                  donePage: DonePage)
+                                  personalDonePage: PersonalDonePage,
+                                  businessDonePage: BusinessDonePage)
     extends FrontendController(mcc) {
 
   implicit val config: AppConfig = appConfig
@@ -72,8 +74,11 @@ class ExampleController @Inject()(appConfig: AppConfig,
   def done(journeyId: String): Action[AnyContent] = Action.async {
     implicit request =>
       connector.complete(journeyId).map {
-        case Some(r) => Ok(donePage(r))
-        case None    => InternalServerError
+        case Some(r) if r.accountType == "personal" =>
+          Ok(personalDonePage(r.personal.get))
+        case Some(r) if r.accountType == "business" =>
+          Ok(businessDonePage(r.business.get))
+        case None => InternalServerError
       }
   }
 
