@@ -15,10 +15,10 @@
  *@
 
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
-@import uk.gov.hmrc.bankaccountverificationexamplefrontend.CompleteResponse
+@import uk.gov.hmrc.bankaccountverificationexamplefrontend.PersonalCompleteResponse
 
 @this(layout: Layout, summary: GovukSummaryList, help: HmrcReportTechnicalIssue)
-@(response: CompleteResponse, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(response: PersonalCompleteResponse, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some("bank-account-verification-example-frontend"), beforeContentBlock) {
     <h1 class="govuk-heading-xl">@messages("service.name")</h1>
@@ -28,7 +28,7 @@
 
     @summary(SummaryList(
         rows = Seq(
-            SummaryListRow(Key(HtmlContent("Account Type")), Value(HtmlContent(response.accountType))),
+            SummaryListRow(Key(HtmlContent("Account Type")), Value(HtmlContent("personal"))),
             SummaryListRow(Key(HtmlContent("Account name")), Value(HtmlContent(response.accountName))),
             SummaryListRow(Key(HtmlContent("Sort code")), Value(HtmlContent(response.sortCode))),
             SummaryListRow(Key(HtmlContent("Account number")), Value(HtmlContent(response.accountNumber))),
