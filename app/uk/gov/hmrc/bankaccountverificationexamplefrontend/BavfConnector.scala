@@ -114,7 +114,7 @@ case class BusinessCompleteResponse(
   rollNumber: Option[String],
   accountNumberWithSortCodeIsValid: ReputationResponseEnum,
   accountExists: Option[ReputationResponseEnum],
-  companyNameMatches: ReputationResponseEnum,
+  companyNameMatches: Option[ReputationResponseEnum],
   companyPostCodeMatches: Option[ReputationResponseEnum],
   companyRegistrationNumberMatches: Option[ReputationResponseEnum],
   nonStandardAccountDetailsRequiredForBacs: Option[ReputationResponseEnum]

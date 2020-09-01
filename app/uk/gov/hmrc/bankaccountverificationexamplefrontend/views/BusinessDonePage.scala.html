@@ -34,9 +34,9 @@
             SummaryListRow(Key(HtmlContent("Account number")), Value(HtmlContent(response.accountNumber))),
             SummaryListRow(Key(HtmlContent("Roll number")), Value(HtmlContent(response.rollNumber.getOrElse("")))),
             SummaryListRow(Key(HtmlContent("Validation result")), Value(HtmlContent(response.accountNumberWithSortCodeIsValid.toString))),
-            SummaryListRow(Key(HtmlContent("Company name matches")), Value(HtmlContent(response.companyNameMatches.toString))),
-            SummaryListRow(Key(HtmlContent("Company postcode matches")), Value(HtmlContent(response.companyPostCodeMatches.toString))),
-            SummaryListRow(Key(HtmlContent("Company registration number matches")), Value(HtmlContent(response.companyRegistrationNumberMatches.toString)))
+            SummaryListRow(Key(HtmlContent("Company name matches")), Value(HtmlContent(response.companyNameMatches.getOrElse("").toString))),
+            SummaryListRow(Key(HtmlContent("Company postcode matches")), Value(HtmlContent(response.companyPostCodeMatches.getOrElse("").toString))),
+            SummaryListRow(Key(HtmlContent("Company registration number matches")), Value(HtmlContent(response.companyRegistrationNumberMatches.getOrElse("").toString)))
         ) ++ Seq(
             response.accountExists.map(v => SummaryListRow(Key(HtmlContent("Account exists")), Value(HtmlContent(v.toString)))),
         ).flatten
