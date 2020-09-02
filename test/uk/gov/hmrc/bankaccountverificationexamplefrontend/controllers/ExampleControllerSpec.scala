@@ -27,7 +27,8 @@ import uk.gov.hmrc.bankaccountverificationexamplefrontend.BavfConnector
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
-import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html.{DonePage, StartPage}
+import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html.StartPage
+import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html.{BusinessDonePage, PersonalDonePage}
 
 class ExampleControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
   private val fakeRequest = FakeRequest("GET", "/")
@@ -39,10 +40,11 @@ class ExampleControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPe
   private val appConfig     = new AppConfig(configuration, serviceConfig)
 
   val startPage: StartPage = app.injector.instanceOf[StartPage]
-  val donePage: DonePage = app.injector.instanceOf[DonePage]
+  val personalDonePage: PersonalDonePage = app.injector.instanceOf[PersonalDonePage]
+  val businessDonePage: BusinessDonePage = app.injector.instanceOf[BusinessDonePage]
   val connector: BavfConnector = app.injector.instanceOf[BavfConnector]
 
-  private val controller = new ExampleController(appConfig, connector, stubMessagesControllerComponents(), startPage, donePage)
+  private val controller = new ExampleController(appConfig, connector, stubMessagesControllerComponents(), startPage, personalDonePage, businessDonePage)
 
   "GET /" should {
     "return 200" in {
