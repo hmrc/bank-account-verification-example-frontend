@@ -33,6 +33,7 @@
             SummaryListRow(Key(HtmlContent("Sort code")), Value(HtmlContent(response.sortCode))),
             SummaryListRow(Key(HtmlContent("Account number")), Value(HtmlContent(response.accountNumber))),
             SummaryListRow(Key(HtmlContent("Roll number")), Value(HtmlContent(response.rollNumber.getOrElse("")))),
+            SummaryListRow(Key(HtmlContent("Address")), Value(HtmlContent(response.address.map(_.toString).getOrElse("")))),
             SummaryListRow(Key(HtmlContent("Validation result")), Value(HtmlContent(response.accountNumberWithSortCodeIsValid.toString))),
             SummaryListRow(Key(HtmlContent("Company name matches")), Value(HtmlContent(response.companyNameMatches.getOrElse("").toString))),
             SummaryListRow(Key(HtmlContent("Company postcode matches")), Value(HtmlContent(response.companyPostCodeMatches.getOrElse("").toString))),

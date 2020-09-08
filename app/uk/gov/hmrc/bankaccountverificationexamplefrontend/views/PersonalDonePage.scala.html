@@ -33,10 +33,12 @@
             SummaryListRow(Key(HtmlContent("Sort code")), Value(HtmlContent(response.sortCode))),
             SummaryListRow(Key(HtmlContent("Account number")), Value(HtmlContent(response.accountNumber))),
             SummaryListRow(Key(HtmlContent("Roll number")), Value(HtmlContent(response.rollNumber.getOrElse("")))),
+            SummaryListRow(Key(HtmlContent("Address")), Value(HtmlContent(response.address.map(_.toString).getOrElse("")))),
             SummaryListRow(Key(HtmlContent("Validation result")), Value(HtmlContent(response.accountNumberWithSortCodeIsValid.toString)))
         ) ++ Seq(
             response.accountExists.map(v => SummaryListRow(Key(HtmlContent("Account exists")), Value(HtmlContent(v.toString)))),
             response.nameMatches.map(v => SummaryListRow(Key(HtmlContent("Account name matched")), Value(HtmlContent(v.toString)))),
+            response.addressMatches.map(v => SummaryListRow(Key(HtmlContent("Account address matched")), Value(HtmlContent(v.toString)))),
             response.nonConsented.map(v => SummaryListRow(Key(HtmlContent("Account non-consented")), Value(HtmlContent(v.toString)))),
             response.subjectHasDeceased.map(v => SummaryListRow(Key(HtmlContent("Account owner deceased")), Value(HtmlContent(v.toString))))
         ).flatten

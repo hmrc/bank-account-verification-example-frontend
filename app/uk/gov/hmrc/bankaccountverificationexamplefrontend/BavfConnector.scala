@@ -28,9 +28,9 @@ class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
   def init(continueUrl: String,
            messages: Option[InitRequestMessages] = None,
            customisationsUrl: Option[String] = None)(
-    implicit ec: ExecutionContext,
-    hc: HeaderCarrier
-  ): Future[Option[String]] = {
+            implicit ec: ExecutionContext,
+            hc: HeaderCarrier
+          ): Future[Option[String]] = {
     import HttpReads.Implicits.readRaw
     import InitRequest.writes
 
@@ -38,8 +38,8 @@ class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
       "bank-account-verification-example-frontend",
       continueUrl,
       messages,
-      customisationsUrl
-    )
+      customisationsUrl,
+      address = Some(InitRequestAddress(List("Line 1", "Line 2"), Some("Town"), Some("Postcode"))))
 
     val url = s"${appConfig.bavfApiBaseUrl}/api/init"
     httpClient.POST[InitRequest, HttpResponse](url, request).map {
@@ -70,59 +70,68 @@ class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
 case class InitRequest(serviceIdentifier: String,
                        continueUrl: String,
                        messages: Option[InitRequestMessages] = None,
-                       customisationsUrl: Option[String] = None)
+                       customisationsUrl: Option[String] = None,
+                       address: Option[InitRequestAddress] = None)
 
 case class InitRequestMessages(en: JsObject, cy: Option[JsObject] = None)
 
+case class InitRequestAddress(lines: List[String], town: Option[String], postcode: Option[String])
+
 object InitRequest {
-  implicit val messagesWrites: OWrites[InitRequestMessages] =
-    Json.writes[InitRequestMessages]
+  implicit val messagesWrites: OWrites[InitRequestMessages] = Json.writes[InitRequestMessages]
+  implicit val addressWrites: OWrites[InitRequestAddress] = Json.writes[InitRequestAddress]
   implicit val writes: Writes[InitRequest] = Json.writes[InitRequest]
 }
 
 case class CompleteResponse(accountType: String,
                             personal: Option[PersonalCompleteResponse],
                             business: Option[BusinessCompleteResponse])
-object CompleteResponse {
-  implicit val reads: Reads[CompleteResponse] =
-    Json.reads[CompleteResponse]
+
+case class CompleteResponseAddress(lines: List[String], town: Option[String], postcode: Option[String]) {
+  override def toString: String = {
+    (lines ++ Seq(town, postcode).flatten).mkString("<br>")
+  }
 }
 
-case class PersonalCompleteResponse(
-  accountName: String,
-  sortCode: String,
-  accountNumber: String,
-  accountNumberWithSortCodeIsValid: ReputationResponseEnum,
-  rollNumber: Option[String],
-  accountExists: Option[ReputationResponseEnum],
-  nameMatches: Option[ReputationResponseEnum],
-  nonConsented: Option[ReputationResponseEnum],
-  subjectHasDeceased: Option[ReputationResponseEnum],
-  nonStandardAccountDetailsRequiredForBacs: Option[ReputationResponseEnum]
-)
+object CompleteResponse {
+  implicit val addressReads: Reads[CompleteResponseAddress] = Json.reads[CompleteResponseAddress]
+  implicit val reads: Reads[CompleteResponse] = Json.reads[CompleteResponse]
+}
+
+case class PersonalCompleteResponse(address: Option[CompleteResponseAddress],
+                                    accountName: String,
+                                    sortCode: String,
+                                    accountNumber: String,
+                                    accountNumberWithSortCodeIsValid: ReputationResponseEnum,
+                                    rollNumber: Option[String],
+                                    accountExists: Option[ReputationResponseEnum],
+                                    nameMatches: Option[ReputationResponseEnum],
+                                    addressMatches: Option[ReputationResponseEnum],
+                                    nonConsented: Option[ReputationResponseEnum],
+                                    subjectHasDeceased: Option[ReputationResponseEnum],
+                                    nonStandardAccountDetailsRequiredForBacs: Option[ReputationResponseEnum])
 
 object PersonalCompleteResponse {
-  implicit val reads: Reads[PersonalCompleteResponse] =
-    Json.reads[PersonalCompleteResponse]
+  implicit val addressReads: Reads[CompleteResponseAddress] = Json.reads[CompleteResponseAddress]
+  implicit val reads: Reads[PersonalCompleteResponse] = Json.reads[PersonalCompleteResponse]
 }
 
-case class BusinessCompleteResponse(
-  companyName: String,
-  companyRegistrationNumber: Option[String],
-  sortCode: String,
-  accountNumber: String,
-  rollNumber: Option[String],
-  accountNumberWithSortCodeIsValid: ReputationResponseEnum,
-  accountExists: Option[ReputationResponseEnum],
-  companyNameMatches: Option[ReputationResponseEnum],
-  companyPostCodeMatches: Option[ReputationResponseEnum],
-  companyRegistrationNumberMatches: Option[ReputationResponseEnum],
-  nonStandardAccountDetailsRequiredForBacs: Option[ReputationResponseEnum]
-)
+case class BusinessCompleteResponse(address: Option[CompleteResponseAddress],
+                                    companyName: String,
+                                    companyRegistrationNumber: Option[String],
+                                    sortCode: String,
+                                    accountNumber: String,
+                                    rollNumber: Option[String],
+                                    accountNumberWithSortCodeIsValid: ReputationResponseEnum,
+                                    accountExists: Option[ReputationResponseEnum],
+                                    companyNameMatches: Option[ReputationResponseEnum],
+                                    companyPostCodeMatches: Option[ReputationResponseEnum],
+                                    companyRegistrationNumberMatches: Option[ReputationResponseEnum],
+                                    nonStandardAccountDetailsRequiredForBacs: Option[ReputationResponseEnum])
 
 object BusinessCompleteResponse {
-  implicit val completeResponseReads: Reads[BusinessCompleteResponse] =
-    Json.reads[BusinessCompleteResponse]
+  implicit val addressReads: Reads[CompleteResponseAddress] = Json.reads[CompleteResponseAddress]
+  implicit val completeResponseReads: Reads[BusinessCompleteResponse] = Json.reads[BusinessCompleteResponse]
 }
 
 sealed trait ReputationResponseEnum
@@ -134,11 +143,11 @@ object ReputationResponseEnum extends Enumerable.Implicits {
   case object No extends WithName("no") with ReputationResponseEnum
 
   case object Indeterminate
-      extends WithName("indeterminate")
+    extends WithName("indeterminate")
       with ReputationResponseEnum
 
   case object Inapplicable
-      extends WithName("inapplicable")
+    extends WithName("inapplicable")
       with ReputationResponseEnum
 
   case object Error extends WithName("error") with ReputationResponseEnum
