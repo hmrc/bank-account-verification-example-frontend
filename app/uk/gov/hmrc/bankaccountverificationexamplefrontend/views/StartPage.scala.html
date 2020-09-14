@@ -16,24 +16,33 @@
 
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
 
-@this(layout: Layout, form: FormWithCSRF, govukButton: GovukButton, help: HmrcReportTechnicalIssue)
+@this(layout: Layout, form: FormWithCSRF, govukButton: GovukButton, govukSummaryList: GovukSummaryList, help: HmrcReportTechnicalIssue)
 
 @(action: Call, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = Some("bank-account-verification-example-frontend"), beforeContentBlock) {
     <h1 class="govuk-heading-xl">@messages("service.name")</h1>
-    <p class="govuk-body">@{
-        messages("service.example.text")
-    }</p>
+    @{
+        messages("service.example.pre.text").split(",,").map {
+            case t => Html(s"""<p class="govuk-body">$t</p>""")
+        }
+    }
+    <ul class="govuk-list govuk-list--bullet">
+    @{
+        messages("service.example.bullets").split(",,").map {
+            case t => Html(s"""<li>$t</li>""")
+        }
+    }
+    </ul>
+    @{
+        messages("service.example.post.text").split(",,").map {
+            case t => Html(s"""<p class="govuk-body">$t</p>""")
+        }
+    }
 
     @form(action) {
         @govukButton(Button(content = HtmlContent(messages("label.start")),
             name = Some("start"),
             inputType = Some("submit"), attributes = Map("id" → "start")))
     }
-
-    @help(ReportTechnicalIssue(
-        serviceCode = "bank-account-verification-example-frontend",
-        language = Some(messages.lang.language)
-    ))
 }
