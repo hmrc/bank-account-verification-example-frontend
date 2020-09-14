@@ -1,7 +1,9 @@
 
 # bank-account-verification-example-frontend
 
-This is a placeholder README.md for a new repository
+`bank-account-verification-example-frontend` (`BAVEFE`) is an example implementation of a service that uses (bank-account-verification-frontend)[https://github.com/hmrc/bank-account-verification-frontend].
+
+To see API details for `bank-account-verification-frontend` see [README](https://github.com/hmrc/bank-account-verification-frontend)
 
 ### License
 
