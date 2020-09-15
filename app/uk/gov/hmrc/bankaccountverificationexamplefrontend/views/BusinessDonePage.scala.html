@@ -50,6 +50,7 @@
             SummaryListRow(Key(HtmlContent("Company registration number matches")), Value(HtmlContent(response.companyRegistrationNumberMatches.getOrElse("").toString)))
         ) ++ Seq(
             response.accountExists.map(v => SummaryListRow(Key(HtmlContent("Account exists")), Value(HtmlContent(v.toString)))),
+            response.sortCodeBankName.map(v => SummaryListRow(Key(HtmlContent("Bank name")), Value(HtmlContent(v))))
         ).flatten
     ))
 
