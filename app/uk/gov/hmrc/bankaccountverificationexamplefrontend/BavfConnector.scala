@@ -109,7 +109,8 @@ case class PersonalCompleteResponse(address: Option[CompleteResponseAddress],
                                     addressMatches: Option[ReputationResponseEnum],
                                     nonConsented: Option[ReputationResponseEnum],
                                     subjectHasDeceased: Option[ReputationResponseEnum],
-                                    nonStandardAccountDetailsRequiredForBacs: Option[ReputationResponseEnum])
+                                    nonStandardAccountDetailsRequiredForBacs: Option[ReputationResponseEnum],
+                                    sortCodeBankName: Option[String])
 
 object PersonalCompleteResponse {
   implicit val addressReads: Reads[CompleteResponseAddress] = Json.reads[CompleteResponseAddress]
@@ -127,7 +128,8 @@ case class BusinessCompleteResponse(address: Option[CompleteResponseAddress],
                                     companyNameMatches: Option[ReputationResponseEnum],
                                     companyPostCodeMatches: Option[ReputationResponseEnum],
                                     companyRegistrationNumberMatches: Option[ReputationResponseEnum],
-                                    nonStandardAccountDetailsRequiredForBacs: Option[ReputationResponseEnum])
+                                    nonStandardAccountDetailsRequiredForBacs: Option[ReputationResponseEnum],
+                                    sortCodeBankName: Option[String])
 
 object BusinessCompleteResponse {
   implicit val addressReads: Reads[CompleteResponseAddress] = Json.reads[CompleteResponseAddress]
