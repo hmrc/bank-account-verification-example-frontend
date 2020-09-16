@@ -16,13 +16,23 @@
 
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.BusinessCompleteResponse
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
 
-@this(layout: Layout, summary: GovukSummaryList, help: HmrcReportTechnicalIssue)
+@this(layout: Layout, summary: GovukSummaryList, help: HmrcReportTechnicalIssue, govukHeader: GovukHeader)
 @(response: BusinessCompleteResponse, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some("bank-account-verification-example-frontend"), beforeContentBlock) {
-    <h1 class="govuk-heading-xl">@messages("service.name")</h1>
-    <p class="govuk-heading-m">@{
+@customHeaderBlock = @{
+    govukHeader(Header(
+        homepageUrl = Some("https://www.gov.uk/"),
+        serviceName = Some(messages("example.service.name")),
+        serviceUrl = Some(messages("service.homePageUrl")),
+        containerClasses = None))
+}
+
+@layout(pageTitle = Some("bank-account-verification-example-frontend"), beforeContentBlock, customHeaderBlock = Some(customHeaderBlock)) {
+    <h1 class="govuk-heading-xl">@messages("donePage.heading")</h1>
+    <h2 class="govuk-heading-m">@messages("service.done.subheading")</h2>
+    <p class="govuk-body">@{
         messages("service.done.text")
     }</p>
 

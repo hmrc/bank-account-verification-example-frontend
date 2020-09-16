@@ -101,13 +101,13 @@ class AdvancedExampleController @Inject()(
       InitRequestMessages(
         en = Json.obj(
           "service.name" -> english("service.name"),
-          "service.header" -> english("bavf.service.header"),
+          "label.accountDetails.heading" -> english("label.accountDetails.heading"),
           "footer.accessibility.url" -> s"${appConfig.exampleExternalUrl}${english("footer.accessibility.url")}"
         ),
         cy = Some(
           Json.obj(
             "service.name" -> welsh("service.name"),
-            "service.header" -> welsh("bavf.service.header"),
+            "label.accountDetails.heading" -> welsh("label.accountDetails.heading"),
             "footer.accessibility.url" -> s"${appConfig.exampleExternalUrl}${welsh("footer.accessibility.url")}"
           )
         )
