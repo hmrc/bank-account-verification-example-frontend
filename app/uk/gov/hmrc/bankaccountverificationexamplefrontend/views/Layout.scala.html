@@ -17,21 +17,22 @@
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
 
 @this(
-        govukLayout: GovukLayout,
-        head: Head,
-        header: HeaderBlock,
-        footer: FooterBlock
+govukLayout: GovukLayout,
+head: Head,
+header: HeaderBlock,
+footer: FooterBlock
 )
 @(pageTitle: Option[String] = None,
         beforeContentBlock: Option[Html] = None,
         headBlock: Option[Html] = None,
-        scriptsBlock: Option[Html] = None
+        scriptsBlock: Option[Html] = None,
+        customHeaderBlock: Option[Html] = None
 )(contentBlock: Html)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @govukLayout(
     pageTitle = pageTitle,
     headBlock = Some(head(headBlock)),
-    headerBlock = Some(header()),
+    headerBlock = customHeaderBlock.orElse(Some(header())),
     scriptsBlock = scriptsBlock,
     beforeContentBlock = beforeContentBlock,
     footerBlock = Some(footer())

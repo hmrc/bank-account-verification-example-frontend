@@ -15,13 +15,22 @@
  *@
 
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
 
-@this(layout: Layout, form: FormWithCSRF, govukButton: GovukButton, govukSummaryList: GovukSummaryList, help: HmrcReportTechnicalIssue)
+@this(layout: Layout, form: FormWithCSRF, govukButton: GovukButton, help: HmrcReportTechnicalIssue, govukHeader: GovukHeader)
 
 @(action: Call, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = Some("bank-account-verification-example-frontend"), beforeContentBlock) {
-    <h1 class="govuk-heading-xl">@messages("service.name")</h1>
+@customHeaderBlock = @{
+    govukHeader(Header(
+        homepageUrl = Some("https://www.gov.uk/"),
+        serviceName = Some(messages("example.service.name")),
+        serviceUrl = Some(messages("service.homePageUrl")),
+        containerClasses = None))
+}
+
+@layout(pageTitle = Some("bank-account-verification-example-frontend"), beforeContentBlock, customHeaderBlock = Some(customHeaderBlock)) {
+    <h1 class="govuk-heading-xl">@messages("startPage.heading")</h1>
     @{
         messages("service.example.pre.text").split(",,").map {
             case t => Html(s"""<p class="govuk-body">$t</p>""")
