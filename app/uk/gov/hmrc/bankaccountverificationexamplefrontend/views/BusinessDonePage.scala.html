@@ -54,9 +54,4 @@
             response.sortCodeBankName.map(v => SummaryListRow(Key(HtmlContent("Bank name")), Value(HtmlContent(v))))
         ).flatten
     ))
-
-    @help(ReportTechnicalIssue(
-        serviceCode = "bank-account-verification-example-frontend",
-        language = Some(messages.lang.language)
-    ))
 }
