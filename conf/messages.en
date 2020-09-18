@@ -1,5 +1,5 @@
 startPage.heading = Verify a bank account
-donePage.heading = Journey complete
+donePage.heading = Example screens complete
 example.service.name = Verify a bank account
 
 service.name = Your service name here
@@ -7,10 +7,10 @@ service.homePageUrl = /bank-account-verification-example-frontend/start
 
 service.example.pre.text = Use this common component when you need to verify a user's bank account.,,This example journey is based on:
 service.example.bullets = the GOV.UK design system,,feedback from HMRC digital services
-service.example.post.text = For consistency, it's better to use the front end screens as shown. However, the content can be adapted to meet differing user needs.,,If you have any suggestions, contact us on slack @txmattval.
+service.example.post.text = For consistency, it's better to use the front end screens as shown. However, content can be adapted to meet differing user needs.,,If you have any suggestions, contact us on slack @txmattval.
 
 service.done.subheading = We have now redirected to the continueUrl.
-service.done.text = The following information will be made available to your service when calling the complete endpoint.
+service.done.text = When you call the complete end point, this information will be available to your service:
 
 label.start = Start
 label.back = Back
