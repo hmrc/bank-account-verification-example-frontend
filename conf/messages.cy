@@ -5,7 +5,7 @@ example.service.name = W Verify a bank account
 service.name = W Your service name here
 service.homePageUrl = W /bank-account-verification-example-frontend/start
 
-service.example.pre.text = W Use this common component when you need to verify a user's bank account.,,W This example journey is based on:
+service.example.pre.text = W Use this common component when you need to verify a user''s bank account.,,W This example journey is based on:
 service.example.bullets = W the GOV.UK design system,,W feedback from HMRC digital services
 service.example.post.text = W For consistency, it's better to use the front end screens as shown. However, the content can be adapted to meet differing user needs.,,W If you have any suggestions, contact us on slack @txmattval.
 
