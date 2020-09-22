@@ -10,7 +10,7 @@ service.example.bullets = the GOV.UK design system,,feedback from HMRC digital s
 service.example.post.text = For consistency, it''s better to use the front end screens as shown. However, the content can be adapted to meet differing user needs.,,If you have any suggestions, contact us on slack @txmattval.
 
 service.done.subheading = We''ll redirect your users to the continueUrl.
-service.done.text = When you call the complete end point,, this information will be available to your service:
+service.done.text = When you call the complete end point, this information will be available to your service:
 
 label.start = Start
 label.back = Back
