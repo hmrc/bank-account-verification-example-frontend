@@ -18,15 +18,15 @@
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.PersonalCompleteResponse
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
 
-@this(layout: Layout, summary: GovukSummaryList, help: HmrcReportTechnicalIssue, govukHeader: GovukHeader)
+@this(layout: Layout, summary: GovukSummaryList, help: HmrcReportTechnicalIssue, hmrcInternalHeader: HmrcInternalHeader)
 @(response: PersonalCompleteResponse, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @customHeaderBlock = @{
-    govukHeader(Header(
-        homepageUrl = Some("https://www.gov.uk/"),
-        serviceName = Some(messages("example.service.name")),
-        serviceUrl = Some(messages("service.homePageUrl")),
-        containerClasses = None))
+    hmrcInternalHeader(InternalHeader(
+        homepageUrl = "https://www.gov.uk/",
+        serviceName = Some(messages("service.name")),
+        serviceUrl = messages("service.homePageUrl"))
+    )
 }
 
 @layout(pageTitle = Some("bank-account-verification-example-frontend"), beforeContentBlock, customHeaderBlock = Some(customHeaderBlock)) {
