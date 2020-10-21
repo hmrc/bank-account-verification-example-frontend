@@ -14,13 +14,11 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
-
-@this(govukHeader: GovukHeader)
+@this(hmrcInternalHeader: HmrcInternalHeader)
 @()(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@govukHeader(Header(
-    homepageUrl = Some("https://www.gov.uk/"),
+@hmrcInternalHeader(InternalHeader(
+    homepageUrl = "https://www.gov.uk/",
     serviceName = Some(messages("service.name")),
-    serviceUrl = Some(messages("service.homePageUrl")),
-    containerClasses = None))
+    serviceUrl = messages("service.homePageUrl"))
+)
