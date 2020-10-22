@@ -41,7 +41,6 @@
         rows = Seq(
             SummaryListRow(Key(HtmlContent("Account type")), Value(HtmlContent("business"))),
             SummaryListRow(Key(HtmlContent("Company name")), Value(HtmlContent(response.companyName))),
-            SummaryListRow(Key(HtmlContent("Company registration number")), Value(HtmlContent(response.companyRegistrationNumber.getOrElse("")))),
             SummaryListRow(Key(HtmlContent("Sort code")), Value(HtmlContent(response.sortCode))),
             SummaryListRow(Key(HtmlContent("Account number")), Value(HtmlContent(response.accountNumber))),
             SummaryListRow(Key(HtmlContent("Roll number")), Value(HtmlContent(response.rollNumber.getOrElse("")))),

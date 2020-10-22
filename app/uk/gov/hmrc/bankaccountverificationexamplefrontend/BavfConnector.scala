@@ -119,7 +119,6 @@ object PersonalCompleteResponse {
 
 case class BusinessCompleteResponse(address: Option[CompleteResponseAddress],
                                     companyName: String,
-                                    companyRegistrationNumber: Option[String],
                                     sortCode: String,
                                     accountNumber: String,
                                     rollNumber: Option[String],
