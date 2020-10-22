@@ -7,7 +7,7 @@ service.homePageUrl = W /bank-account-verification-example-frontend/start
 
 service.example.pre.text = W Use this common component when you need to verify a user''s bank account.,,W This example journey is based on:
 service.example.bullets = W the GOV.UK design system,,W feedback from HMRC digital services
-service.example.post.text = W For consistency, it''s better to use the front end screens as shown. However, the content can be adapted to meet differing user needs.,,W If you have any suggestions, contact us on slack @cipattval.
+service.example.post.text = W For consistency, it''s better to use the front end screens as shown. However, the content can be adapted to meet differing user needs.,,W If you have any suggestions, contact us on slack <a href="https://hmrcdigital.slack.com/channels/team-cip-attribute-validation" target="_blank">@cipattval</a>.
 
 service.done.subheading = W We''ll redirect your users to the continueUrl.
 service.done.text = W The following information will be made available to your service when calling the complete endpoint.
