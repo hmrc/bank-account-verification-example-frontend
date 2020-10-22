@@ -24,8 +24,6 @@
   content = HtmlContent(messages("betaBanner.content"))
  ))
 
- @banner(Banner(language = appConfig.langToLanguage(messages.lang.code)))
-
  @govukBackLink(BackLink(href="javascript:history.back()", content = HtmlContent(messages("label.back"))))
 
  @languageSelect(LanguageSelect(messages.lang.code match {
