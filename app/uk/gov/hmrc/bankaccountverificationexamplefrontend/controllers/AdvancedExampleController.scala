@@ -17,15 +17,12 @@
 package uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.i18n.{Lang, Messages, MessagesApi}
+import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc._
-import uk.gov.hmrc.bankaccountverificationexamplefrontend.{
-  BavfConnector,
-  InitRequestMessages
-}
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html._
+import uk.gov.hmrc.bankaccountverificationexamplefrontend.{BavfConnector, InitRequestMessages}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -33,42 +30,30 @@ import scala.concurrent.Future
 
 @Singleton
 class AdvancedExampleController @Inject()(
-  appConfig: AppConfig,
-  connector: BavfConnector,
-  mcc: MessagesControllerComponents,
-  beforeContentBlock: BeforeContentBlock,
-  startPage: StartPage,
-  personalDonePage: PersonalDonePage,
-  businessDonePage: BusinessDonePage
-) extends FrontendController(mcc) {
+                                           appConfig: AppConfig,
+                                           connector: BavfConnector,
+                                           mcc: MessagesControllerComponents,
+                                           beforeContentBlock: BeforeContentBlock,
+                                           startPage: StartPage,
+                                           personalDonePage: PersonalDonePage,
+                                           businessDonePage: BusinessDonePage
+                                         ) extends FrontendController(mcc) {
 
   implicit val config: AppConfig = appConfig
 
   val start: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(
-      Ok(
-        startPage(
-          action =
-            uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers.routes.AdvancedExampleController.transfer,
-          beforeContentBlock = Some(beforeContentBlock())
-        )
-      )
-    )
+    Future.successful(Ok(startPage(
+      action = uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers.routes.AdvancedExampleController.transfer,
+      beforeContentBlock = Some(beforeContentBlock()))))
   }
 
   val transfer: Action[AnyContent] = Action.async { implicit request =>
-    val continueUrl =
-      s"${appConfig.exampleExternalUrl}/bank-account-verification-example-frontend/advanced/done"
-    val customisationsUrl =
-      s"${appConfig.exampleInternalUrl}/bank-account-verification"
+    val continueUrl = s"${appConfig.exampleExternalUrl}/bank-account-verification-example-frontend/advanced/done"
+    val customisationsUrl = s"${appConfig.exampleInternalUrl}/bank-account-verification"
 
     connector.init(continueUrl, requestMessages, Some(customisationsUrl)).map {
-      case Some(journeyId) =>
-        val redirectUrl =
-          s"${appConfig.bavfWebBaseUrl}/bank-account-verification/start/$journeyId"
-        SeeOther(redirectUrl)
-      case None =>
-        InternalServerError
+      case Some(initResponse) => SeeOther(s"${appConfig.bavfWebBaseUrl}${initResponse.startUrl}")
+      case None => InternalServerError
     }
   }
 
@@ -76,19 +61,9 @@ class AdvancedExampleController @Inject()(
     implicit request =>
       connector.complete(journeyId).map {
         case Some(r) if r.accountType == "personal" =>
-          Ok(
-            personalDonePage(
-              r.personal.get,
-              beforeContentBlock = Some(beforeContentBlock())
-            )
-          )
+          Ok(personalDonePage(r.personal.get, beforeContentBlock = Some(beforeContentBlock())))
         case Some(r) if r.accountType == "business" =>
-          Ok(
-            businessDonePage(
-              r.business.get,
-              beforeContentBlock = Some(beforeContentBlock())
-            )
-          )
+          Ok(businessDonePage(r.business.get, beforeContentBlock = Some(beforeContentBlock())))
         case None => InternalServerError
       }
   }

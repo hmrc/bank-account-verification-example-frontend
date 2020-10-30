@@ -30,7 +30,7 @@ class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
            customisationsUrl: Option[String] = None)(
             implicit ec: ExecutionContext,
             hc: HeaderCarrier
-          ): Future[Option[String]] = {
+          ): Future[Option[InitResponse]] = {
     import HttpReads.Implicits.readRaw
     import InitRequest.writes
 
@@ -44,7 +44,7 @@ class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
     val url = s"${appConfig.bavfApiBaseUrl}/api/init"
     httpClient.POST[InitRequest, HttpResponse](url, request).map {
       case r if r.status == 200 =>
-        Some(r.json.as[String])
+        Some(r.json.as[InitResponse])
       case _ =>
         None
     }
@@ -74,8 +74,14 @@ case class InitRequest(serviceIdentifier: String,
                        address: Option[InitRequestAddress] = None)
 
 case class InitRequestMessages(en: JsObject, cy: Option[JsObject] = None)
-
 case class InitRequestAddress(lines: List[String], town: Option[String], postcode: Option[String])
+
+case class InitResponse(journeyId: String, startUrl: String, completeUrl: String, detailsUrl: Option[String])
+
+object InitResponse {
+  implicit def writes: OWrites[InitResponse] = Json.writes[InitResponse]
+  implicit def reads: Reads[InitResponse] = Json.reads[InitResponse]
+}
 
 object InitRequest {
   implicit val messagesWrites: OWrites[InitRequestMessages] = Json.writes[InitRequestMessages]

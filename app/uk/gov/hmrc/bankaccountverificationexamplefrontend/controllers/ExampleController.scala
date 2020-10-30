@@ -17,23 +17,16 @@
 package uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.i18n.{Lang, Messages, MessagesApi}
+import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc._
-import uk.gov.hmrc.bankaccountverificationexamplefrontend.{
-  BavfConnector,
-  InitRequestMessages
-}
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
-import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html.{
-  PersonalDonePage,
-  BusinessDonePage,
-  StartPage
-}
+import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html.{BusinessDonePage, PersonalDonePage, StartPage}
+import uk.gov.hmrc.bankaccountverificationexamplefrontend.{BavfConnector, InitRequestMessages}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
 class ExampleController @Inject()(appConfig: AppConfig,
@@ -42,7 +35,7 @@ class ExampleController @Inject()(appConfig: AppConfig,
                                   startPage: StartPage,
                                   personalDonePage: PersonalDonePage,
                                   businessDonePage: BusinessDonePage)
-    extends FrontendController(mcc) {
+  extends FrontendController(mcc) {
 
   implicit val config: AppConfig = appConfig
 
@@ -58,16 +51,11 @@ class ExampleController @Inject()(appConfig: AppConfig,
   }
 
   val transfer: Action[AnyContent] = Action.async { implicit request =>
-    val continueUrl =
-      s"${appConfig.exampleExternalUrl}/bank-account-verification-example-frontend/done"
+    val continueUrl = s"${appConfig.exampleExternalUrl}/bank-account-verification-example-frontend/done"
 
     connector.init(continueUrl, messages = requestMessages).map {
-      case Some(journeyId) =>
-        val redirectUrl =
-          s"${appConfig.bavfWebBaseUrl}/bank-account-verification/start/$journeyId"
-        SeeOther(redirectUrl)
-      case None =>
-        InternalServerError
+      case Some(initResponse) => SeeOther(s"${appConfig.bavfWebBaseUrl}${initResponse.startUrl}")
+      case None => InternalServerError
     }
   }
 
