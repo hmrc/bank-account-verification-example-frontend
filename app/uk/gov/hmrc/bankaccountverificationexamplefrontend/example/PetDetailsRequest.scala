@@ -22,8 +22,9 @@ import play.api.data.format.Formatter
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.libs.json.Json
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.{Enumerable, WithName}
-
 import play.api.data.Forms._
+
+import scala.util.Try
 
 sealed trait PetTypeEnum
 object PetTypeEnum extends Enumerable.Implicits {
@@ -51,7 +52,7 @@ object PetDetailsRequest {
   val form: Form[PetDetailsRequest] =
     Form(
       mapping(
-        "petName" -> nonEmptyText(maxLength = 64),
+        "petName" -> nonEmptyText(maxLength = 64).verifying(petNameConstraint()),
         "petType" -> petTypeMapping,
         "age" -> number,
         "description" -> optional(text)
@@ -72,6 +73,13 @@ object PetDetailsRequest {
 
     of[PetTypeEnum](permissiveStringFormatter).verifying(petTypeConstraint())
   }
+
+  def petNameConstraint(): Constraint[String] =
+    Constraint[String](Some("constraints.petName"), Seq()) { input =>
+      if (input.trim.length == 0) Invalid(ValidationError("error.petName.required"))
+      else Valid
+    }
+
 
   def petTypeConstraint(): Constraint[PetTypeEnum] =
     Constraint[PetTypeEnum](Some("constraints.petType"), Seq()) { input =>

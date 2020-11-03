@@ -15,6 +15,23 @@ service.done.text = W The following information will be made available to your s
 label.start = W View an example
 label.back = W Back
 
+petDetailsPage.heading = W Pet details
+
+label.petName = W Name of pet
+label.petType = W Pet animal type
+label.petAge = W Age of pet
+label.petDescription = W Description
+label.continue = W Continue
+
+label.petType.cat = 😸
+label.petType.dog = 🐶
+label.petType.bunny = 🐰
+
+error.summaryText = W Error occurred
+error.petType.required = W Select a pet type
+error.petName.required = W Enter the pet's name
+error.petAge.required = W Enter the age of the pet
+
 footer.cookies.text = W Cookies
 footer.cookies.url = /help/cookies
 footer.privacy.text = W Privacy policy
