@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers
+package uk.gov.hmrc.bankaccountverificationexamplefrontend.example
 
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.{Lang, MessagesApi}
@@ -34,7 +34,6 @@ class AdvancedExampleController @Inject()(
                                            connector: BavfConnector,
                                            mcc: MessagesControllerComponents,
                                            beforeContentBlock: BeforeContentBlock,
-                                           startPage: StartPage,
                                            personalDonePage: PersonalDonePage,
                                            businessDonePage: BusinessDonePage
                                          ) extends FrontendController(mcc) {
@@ -42,9 +41,11 @@ class AdvancedExampleController @Inject()(
   implicit val config: AppConfig = appConfig
 
   val start: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(startPage(
-      action = uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers.routes.AdvancedExampleController.transfer,
-      beforeContentBlock = Some(beforeContentBlock()))))
+//    Future.successful(Ok(startPage(
+//      action = uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers.routes.AdvancedExampleController.transfer,
+//      beforeContentBlock = Some(beforeContentBlock()))))
+
+    Future.successful(InternalServerError)
   }
 
   val transfer: Action[AnyContent] = Action.async { implicit request =>

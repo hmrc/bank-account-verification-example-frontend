@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers
+package uk.gov.hmrc.bankaccountverificationexamplefrontend.example
 
 import javax.inject.Inject
 import play.api.Configuration

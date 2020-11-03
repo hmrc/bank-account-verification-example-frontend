@@ -27,10 +27,11 @@ import uk.gov.hmrc.bankaccountverificationexamplefrontend.BavfConnector
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
+import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.MakingPetsDigitalController
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html.StartPage
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html.{BusinessDonePage, PersonalDonePage}
 
-class ExampleControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
+class MakingPetsDigitalControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
   private val fakeRequest = FakeRequest("GET", "/")
 
   private val env           = Environment.simple()
@@ -44,7 +45,7 @@ class ExampleControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPe
   val businessDonePage: BusinessDonePage = app.injector.instanceOf[BusinessDonePage]
   val connector: BavfConnector = app.injector.instanceOf[BavfConnector]
 
-  private val controller = new ExampleController(appConfig, connector, stubMessagesControllerComponents(), startPage, personalDonePage, businessDonePage)
+  private val controller = new MakingPetsDigitalController(appConfig, connector, stubMessagesControllerComponents(), startPage, personalDonePage, businessDonePage)
 
   "GET /" should {
     "return 200" in {

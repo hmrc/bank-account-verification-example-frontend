@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers
+package uk.gov.hmrc.bankaccountverificationexamplefrontend.example
 
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc._
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
-import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html.{BusinessDonePage, PersonalDonePage, StartPage}
+import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.html.PetDetails
+import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html.{BusinessDonePage, PersonalDonePage}
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.{BavfConnector, InitRequestMessages}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -29,33 +30,31 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class ExampleController @Inject()(appConfig: AppConfig,
-                                  connector: BavfConnector,
-                                  mcc: MessagesControllerComponents,
-                                  startPage: StartPage,
-                                  personalDonePage: PersonalDonePage,
-                                  businessDonePage: BusinessDonePage)
+class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
+                                            connector: BavfConnector,
+                                            mcc: MessagesControllerComponents,
+                                            petDetails: PetDetails,
+                                            personalDonePage: PersonalDonePage,
+                                            businessDonePage: BusinessDonePage)
   extends FrontendController(mcc) {
 
   implicit val config: AppConfig = appConfig
 
-  val start: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(
-      Ok(
-        startPage(
-          action =
-            uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers.routes.ExampleController.transfer
-        )
-      )
-    )
-  }
+  val getDetails: Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(Ok(petDetails(PetDetailsRequest.form)))}
 
-  val transfer: Action[AnyContent] = Action.async { implicit request =>
-    val continueUrl = s"${appConfig.exampleExternalUrl}/bank-account-verification-example-frontend/done"
+  val postDetails:Action[AnyContent] = Action.async { implicit request =>
+    val form = PetDetailsRequest.form.bindFromRequest()
 
-    connector.init(continueUrl, messages = requestMessages).map {
-      case Some(initResponse) => SeeOther(s"${appConfig.bavfWebBaseUrl}${initResponse.startUrl}")
-      case None => InternalServerError
+    if (form.hasErrors)
+      Future.successful(BadRequest(petDetails(form)))
+    else {
+      val continueUrl = s"${appConfig.exampleExternalUrl}/bank-account-verification-example-frontend/done"
+
+      connector.init(continueUrl, messages = requestMessages).map {
+        case Some(initResponse) => SeeOther(s"${appConfig.bavfWebBaseUrl}${initResponse.startUrl}")
+        case None => InternalServerError
+      }
     }
   }
 

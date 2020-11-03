@@ -1,0 +1,81 @@
+@*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
+@import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.PetDetailsRequest
+@import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html.Layout
+
+@this(layout: Layout, form: FormWithCSRF, input: GovukInput, errorSummary: GovukErrorSummary, govukButton: GovukButton,
+        radios: GovukRadios, help: HmrcReportTechnicalIssue, govukHeader: GovukHeader)
+
+@(detailsForm: Form[PetDetailsRequest], beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@customHeaderBlock = @{
+    govukHeader(Header(
+        homepageUrl = Some("https://www.gov.uk/"),
+        serviceName = Some(messages("example.service.name")),
+        serviceUrl = Some(messages("service.homePageUrl")),
+        containerClasses = None))
+}
+
+@layout(pageTitle = Some("bank-account-verification-example-frontend"), beforeContentBlock, customHeaderBlock = Some(customHeaderBlock)) {
+    <h1 class="govuk-heading-xl">@messages("petDetailsPage.heading")</h1>
+
+    @if(detailsForm.hasErrors) {
+        @errorSummary(ErrorSummary(title = HtmlContent(messages("error.summaryText")),
+            errorList = detailsForm.errors.map { error ⇒
+                ErrorLink(href = Some(s"#${error.key}"),
+                    content = HtmlContent(messages(error.message)))
+            }))
+    }
+
+    @form(uk.gov.hmrc.bankaccountverificationexamplefrontend.example.routes.MakingPetsDigitalController.postDetails()) {
+        @input(Input(value = detailsForm("petName").value,
+            label = Label(content = HtmlContent(messages("label.petName"))),
+            formGroupClasses = "form-field-group",
+            name = detailsForm("petName").name, id = detailsForm("petName").name,
+            errorMessage = detailsForm("petName").error.map(fe ⇒ ErrorMessage(content = HtmlContent(messages(fe.message))))))
+
+        @radios(Radios(
+            idPrefix = Some("pet-type"),
+            name = "petType",
+            items = Seq(
+                RadioItem(content = HtmlContent(messages("label.petType.cat")),
+                    id = Some("cat"),
+                    value = Some("cat"),
+                    checked = detailsForm("petType").value.contains("cat")),
+                RadioItem(content = HtmlContent(messages("label.petType.dog")),
+                    id = Some("dog"),
+                    value = Some("dog"),
+                    checked = detailsForm("petType").value.contains("bunny")),
+                RadioItem(content = HtmlContent(messages("label.petType.bunny")),
+                    id = Some("bunny"),
+                    value = Some("bunny"),
+                    checked = detailsForm("accountType").value.contains("personal"))
+            ),
+            errorMessage = detailsForm.errors.headOption.map(fe => ErrorMessage(content = HtmlContent(messages(fe.message))))
+        ))
+
+        @input(Input(value = detailsForm("age").value,
+            label = Label(content = HtmlContent(messages("label.age"))),
+            formGroupClasses = "form-field-group",
+            name = detailsForm("age").name, id = detailsForm("age").name,
+            errorMessage = detailsForm("age").error.map(fe ⇒ ErrorMessage(content = HtmlContent(messages(fe.message))))))
+
+        @govukButton(Button(content = HtmlContent(messages("label.continue")), name = Some("continue"), inputType = Some("submit")))
+    }
+}
