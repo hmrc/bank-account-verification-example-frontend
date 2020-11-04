@@ -41,10 +41,6 @@ class AdvancedExampleController @Inject()(
   implicit val config: AppConfig = appConfig
 
   val start: Action[AnyContent] = Action.async { implicit request =>
-//    Future.successful(Ok(startPage(
-//      action = uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers.routes.AdvancedExampleController.transfer,
-//      beforeContentBlock = Some(beforeContentBlock()))))
-
     Future.successful(InternalServerError)
   }
 
