@@ -5,17 +5,15 @@ example.service.name = Verify a bank account
 service.name = Your service name here
 service.homePageUrl = /bank-account-verification-example-frontend/start
 
-service.example.pre.text = Use this common component when you need to verify a user''s bank account.,,This example journey is based on:
-service.example.bullets = the GOV.UK design system,,feedback from HMRC digital services
-service.example.post.text = For consistency, it''s better to use the front end screens as shown. However, the content can be adapted to meet differing user needs.,,If you have any suggestions, contact us on slack <a href="https://hmrcdigital.slack.com/channels/team-cip-attribute-validation" target="_blank">@cipattval</a>.
-
 service.done.subheading = We''ll redirect your users to the continueUrl.
 service.done.text = When you call the complete end point, this information will be available to your service:
 
 label.start = View an example
 label.back = Back
 
-petDetailsPage.heading = Pet details
+petDetailsPage.heading = Apply for Making Pets Digital
+petDetailsPage.content1 = Register your pet with HMRC to find out if you are due a refund on pet insurance.
+petDetailsPage.content2 = You will need to provide details of a bank account into which the refund can be paid.
 
 label.petName = Name of pet
 label.petType = Pet animal type
@@ -23,9 +21,10 @@ label.petAge = Age of pet
 label.petDescription = Description
 label.continue = Continue
 
-label.petType.cat = 😸
-label.petType.dog = 🐶
-label.petType.bunny = 🐰
+label.petType.bunny = Bunny 🐰
+label.petType.cat = Cat 😸
+label.petType.dog = Dog 🐶
+label.petType.other = Other 🦖
 
 error.summaryText = Error occurred
 error.petType.required = Select a pet type
@@ -45,3 +44,6 @@ footer.accessibility.url = /bank-account-verification-example-frontend/accessibi
 
 betaBanner.content = This is a new service – your <a id='beta-banner-feedback' href='/feedback'>feedback</a> will help us to improve it.
 label.accountDetails.heading = Enter the bank account details
+
+phaseBanner.tag = BETA
+phaseBanner.content = This is a new service – your <a href='/feedback'>feedback</a> will help us to improve it.

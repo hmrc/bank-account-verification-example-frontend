@@ -31,9 +31,10 @@ object PetTypeEnum extends Enumerable.Implicits {
   case object Cat extends WithName("cat") with PetTypeEnum
   case object Dog extends WithName("dog") with PetTypeEnum
   case object Bunny extends WithName("bunny") with PetTypeEnum
+  case object Other extends WithName("other") with PetTypeEnum
   case object Error extends WithName("") with PetTypeEnum
 
-  val values: Seq[PetTypeEnum] = Seq(Cat, Dog, Bunny)
+  val values: Seq[PetTypeEnum] = Seq(Cat, Dog, Bunny, Other)
 
   implicit val enumerable: Enumerable[PetTypeEnum] =
     Enumerable(values.map(v => v.toString -> v): _*)

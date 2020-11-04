@@ -29,13 +29,15 @@
 @customHeaderBlock = @{
     govukHeader(Header(
         homepageUrl = Some("https://www.gov.uk/"),
-        serviceName = Some(messages("example.service.name")),
+        serviceName = Some(messages("service.name")),
         serviceUrl = Some(messages("service.homePageUrl")),
         containerClasses = None))
 }
 
 @layout(pageTitle = Some("bank-account-verification-example-frontend"), beforeContentBlock, customHeaderBlock = Some(customHeaderBlock)) {
     <h1 class="govuk-heading-xl">@messages("petDetailsPage.heading")</h1>
+    <p class="govuk-body-l">@messages("petDetailsPage.content1")</p>
+    <p class="govuk-body-l">@messages("petDetailsPage.content2")</p>
 
     @if(detailsForm.hasErrors) {
         @errorSummary(ErrorSummary(title = HtmlContent(messages("error.summaryText")),
@@ -56,6 +58,10 @@
             idPrefix = Some("pet-type"),
             name = "petType",
             items = Seq(
+                RadioItem(content = HtmlContent(messages("label.petType.bunny")),
+                    id = Some("bunny"),
+                    value = Some("bunny"),
+                    checked = detailsForm("accountType").value.contains("bunny")),
                 RadioItem(content = HtmlContent(messages("label.petType.cat")),
                     id = Some("cat"),
                     value = Some("cat"),
@@ -64,16 +70,23 @@
                     id = Some("dog"),
                     value = Some("dog"),
                     checked = detailsForm("petType").value.contains("dog")),
-                RadioItem(content = HtmlContent(messages("label.petType.bunny")),
-                    id = Some("bunny"),
-                    value = Some("bunny"),
-                    checked = detailsForm("accountType").value.contains("bunny"))
+                RadioItem(content = HtmlContent(messages("label.petType.other")),
+                    id = Some("other"),
+                    value = Some("other"),
+                    checked = detailsForm("petType").value.contains("other"))
             ),
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text("What animal is your pet?"),
+                    isPageHeading = false
+                ))
+            )),
             errorMessage = detailsForm.errors.headOption.map(fe => ErrorMessage(content = HtmlContent(messages(fe.message))))
         ))
 
         @input(Input(value = detailsForm("age").value,
             label = Label(content = HtmlContent(messages("label.petAge"))),
+            classes = "govuk-input--width-5",
             formGroupClasses = "form-field-group",
             name = detailsForm("age").name, id = detailsForm("age").name,
             errorMessage = detailsForm("age").error.map(fe ⇒ ErrorMessage(content = HtmlContent(messages(fe.message))))))

@@ -16,7 +16,7 @@
 
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
 
-@this(govukLayout: GovukLayout, head: Head, header: HeaderBlock, footer: FooterBlock, scripts: Scripts)
+@this(govukLayout: GovukLayout, head: Head, header: HeaderBlock, govukBackLink: GovukBackLink, govukPhaseBanner: GovukPhaseBanner, languageSelect: HmrcLanguageSelect, footer: FooterBlock, scripts: Scripts)
 
 @(pageTitle: Option[String] = None,
         beforeContentBlock: Option[Html] = None,
@@ -25,11 +25,32 @@
         customHeaderBlock: Option[Html] = None
 )(contentBlock: Html)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
+    @defaultBeforeContentBlock = {
+    @{
+        if(messages.isDefinedAt("phaseBanner.tag")) {
+            govukPhaseBanner(PhaseBanner(
+                tag = Some(Tag(content = HtmlContent(messages("phaseBanner.tag")))),
+                content = HtmlContent(messages("phaseBanner.content"))))
+        }
+    }
+
+    @govukBackLink(BackLink(href="javascript:history.back()", content = HtmlContent(messages("label.back"))))
+
+    @{
+            languageSelect(LanguageSelect(messages.lang.code match {
+                case "en" ⇒ En
+                case "cy" ⇒ Cy
+            }, En -> s"${uk.gov.hmrc.bankaccountverificationexamplefrontend.example.routes.ExampleLanguageController.switchToLanguage("english")}",
+                Cy -> s"${uk.gov.hmrc.bankaccountverificationexamplefrontend.example.routes.ExampleLanguageController.switchToLanguage("cymraeg")}"
+            ))
+    }
+    }
+
 @govukLayout(
     pageTitle = pageTitle,
     headBlock = Some(head(headBlock)),
     headerBlock = customHeaderBlock.orElse(Some(header())),
     scriptsBlock = Some(scripts(scriptsBlock)),
-    beforeContentBlock = beforeContentBlock,
+    beforeContentBlock = beforeContentBlock.orElse(Some(defaultBeforeContentBlock)),
     footerBlock = Some(footer())
 )(contentBlock)

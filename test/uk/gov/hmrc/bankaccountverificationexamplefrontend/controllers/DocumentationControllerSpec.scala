@@ -27,11 +27,10 @@ import uk.gov.hmrc.bankaccountverificationexamplefrontend.BavfConnector
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
-import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.MakingPetsDigitalController
-import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html.StartPage
+import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html.LandingPage
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html.{BusinessDonePage, PersonalDonePage}
 
-class MakingPetsDigitalControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
+class DocumentationControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
   private val fakeRequest = FakeRequest("GET", "/")
 
   private val env           = Environment.simple()
@@ -40,21 +39,19 @@ class MakingPetsDigitalControllerSpec extends AnyWordSpec with Matchers with Gui
   private val serviceConfig = new ServicesConfig(configuration)
   private val appConfig     = new AppConfig(configuration, serviceConfig)
 
-  val startPage: StartPage = app.injector.instanceOf[StartPage]
-  val personalDonePage: PersonalDonePage = app.injector.instanceOf[PersonalDonePage]
-  val businessDonePage: BusinessDonePage = app.injector.instanceOf[BusinessDonePage]
-  val connector: BavfConnector = app.injector.instanceOf[BavfConnector]
+  val landingPage: LandingPage = app.injector.instanceOf[LandingPage]
 
-  private val controller = new MakingPetsDigitalController(appConfig, connector, stubMessagesControllerComponents(), startPage, personalDonePage, businessDonePage)
+  private val controller = new DocumentationController(
+    appConfig, stubMessagesControllerComponents(), landingPage)
 
   "GET /" should {
     "return 200" in {
-      val result = controller.start(fakeRequest)
+      val result = controller.display(fakeRequest)
       status(result) shouldBe Status.OK
     }
 
     "return HTML" in {
-      val result = controller.start(fakeRequest)
+      val result = controller.display(fakeRequest)
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
     }

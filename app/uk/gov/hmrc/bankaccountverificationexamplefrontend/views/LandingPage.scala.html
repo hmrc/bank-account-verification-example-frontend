@@ -17,42 +17,38 @@
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
 
 @this(layout: Layout, form: FormWithCSRF, govukButton: GovukButton, help: HmrcReportTechnicalIssue, hmrcInternalHeader: HmrcInternalHeader)
-
 @(beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @customHeaderBlock = @{
 
     hmrcInternalHeader(InternalHeader(
         homepageUrl = "https://www.gov.uk/",
-        serviceName = Some(messages("service.name")),
+        serviceName = Some(messages("startPage.heading")),
         serviceUrl = messages("service.homePageUrl"))
     )
 }
 
-@layout(pageTitle = Some("bank-account-verification-example-frontend"), beforeContentBlock, customHeaderBlock = Some(customHeaderBlock)) {
+@layout(pageTitle = Some("bank-account-verification-example-frontend"), beforeContentBlock = Some(Html("")), customHeaderBlock = Some(customHeaderBlock)) {
     <h1 class="govuk-heading-xl">@messages("startPage.heading")</h1>
-    @{
-        messages("service.example.pre.text").split(",,").map {
-            case t => Html(s"""<p class="govuk-body">$t</p>""")
-        }
-    }
-    <ul class="govuk-list govuk-list--bullet">
-    @{
-        messages("service.example.bullets").split(",,").map {
-            case t => Html(s"""<li>$t</li>""")
-        }
-    }
+
+    <p class="govuk-body">Use this common component when you need to verify a user's bank account.</p>
+
+    <label class="govuk-label" for="journey-examples">This example journey is based on:</label>
+    <ul id="journey-examples" class="govuk-list govuk-list--bullet">
+        <li>the GOV.UK design system</li>
+        <li>feedback from HMRC digital services</li>
     </ul>
-    @{
-        messages("service.example.post.text").split(",,").map {
-            case t => Html(s"""<p class="govuk-body">$t</p>""")
-        }
-    }
+
+    <p class="govuk-body">For consistency, it's better to use the front end screens as shown. However, the content can be adapted to meet differing user needs.</p>
+
+    <p class="govuk-body">For developer facing documentation please see the <a href="https://github.com/hmrc/bank-account-verification-frontend">github repository</a>.</p>
+
+    <p class="govuk-body">If you have any suggestions, contact us on slack <a href="https://hmrcdigital.slack.com/channels/team-cip-attribute-validation" target="_blank">@@cipattval</a>.</p>
+
 
     @govukButton(Button(content = HtmlContent(messages("label.start")),
         name = Some("start"),
         href = Some(uk.gov.hmrc.bankaccountverificationexamplefrontend.example.routes.MakingPetsDigitalController.getDetails.url),
         inputType = Some("button"),
         attributes = Map("id" → "start")))
-
 }
