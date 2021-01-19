@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,11 @@ import javax.inject.{Inject, Singleton}
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc._
+import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.html.PetDetails
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html.{BusinessDonePage, PersonalDonePage}
-import uk.gov.hmrc.bankaccountverificationexamplefrontend.{BavfConnector, InitRequestMessages}
+import uk.gov.hmrc.bankaccountverificationexamplefrontend.{AuthProviderId, BavfConnector, InitRequestMessages}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -32,29 +33,40 @@ import scala.concurrent.Future
 @Singleton
 class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
                                             connector: BavfConnector,
+                                            val authConnector: AuthConnector,
                                             mcc: MessagesControllerComponents,
                                             petDetails: PetDetails,
                                             personalDonePage: PersonalDonePage,
                                             businessDonePage: BusinessDonePage)
-  extends FrontendController(mcc) {
+  extends FrontendController(mcc) with AuthorisedFunctions {
 
   implicit val config: AppConfig = appConfig
 
   val getDetails: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(petDetails(PetDetailsRequest.form)))}
+    authorised() {
+      Future.successful(Ok(petDetails(PetDetailsRequest.form)))
+    } recoverWith { case _ =>
+      Future.successful(SeeOther(appConfig.authLoginStubUrl))
+    }
+  }
 
-  val postDetails:Action[AnyContent] = Action.async { implicit request =>
-    val form = PetDetailsRequest.form.bindFromRequest()
+  val postDetails: Action[AnyContent] = Action.async { implicit request =>
+    authorised().retrieve(AuthProviderId.retrieval) {
+      authProviderId =>
+        val form = PetDetailsRequest.form.bindFromRequest()
 
-    if (form.hasErrors)
-      Future.successful(BadRequest(petDetails(form)))
-    else {
-      val continueUrl = s"${appConfig.exampleExternalUrl}/bank-account-verification-example-frontend/done"
+        if (form.hasErrors)
+          Future.successful(BadRequest(petDetails(form)))
+        else {
+          val continueUrl = s"${appConfig.exampleExternalUrl}/bank-account-verification-example-frontend/done"
 
-      connector.init(continueUrl, messages = requestMessages).map {
-        case Some(initResponse) => SeeOther(s"${appConfig.bavfWebBaseUrl}${initResponse.startUrl}")
-        case None => InternalServerError
-      }
+          connector.init(continueUrl, messages = requestMessages).map {
+            case Some(initResponse) => SeeOther(s"${appConfig.bavfWebBaseUrl}${initResponse.startUrl}")
+            case None => InternalServerError
+          }
+        }
+    } recoverWith { case _ =>
+      Future.successful(SeeOther(appConfig.authLoginStubUrl))
     }
   }
 
