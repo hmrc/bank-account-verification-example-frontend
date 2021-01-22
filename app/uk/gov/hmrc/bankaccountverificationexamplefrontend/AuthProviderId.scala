@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,12 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this()
+package uk.gov.hmrc.bankaccountverificationexamplefrontend
 
-@(scriptsBlock: Option[Html] = None)
-@scriptsBlock
+import play.api.libs.json.{JsObject, JsSuccess, Reads}
+import uk.gov.hmrc.auth.core.retrieve.{Retrieval, SimpleRetrieval}
 
- <!-- Google Tag Manager (noscript) → <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NDJKHWK" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>-->
-<!-- End Google Tag Manager (noscript) -->
+object AuthProviderId {
+  val reads: Reads[String] = Reads[String] { json =>
+    JsSuccess(json.as[JsObject].fields.head._2.as[String])
+  }
+
+  val retrieval: Retrieval[String] = SimpleRetrieval("authProviderId", reads)
+}

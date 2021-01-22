@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,12 @@ class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig)
 
   val exampleExternalUrl = servicesConfig.baseUrl("bank-account-verification-example-frontend.external")
   val exampleInternalUrl = servicesConfig.baseUrl("bank-account-verification-example-frontend.internal")
+
+  val authLoginStubPath = servicesConfig.getConfString("auth-login-stub.path","")
+  val authLoginStubUrl = servicesConfig.baseUrl("auth-login-stub") +
+    authLoginStubPath + "?continue=" +
+    exampleExternalUrl + "/bank-account-verification-example-frontend" +
+    uk.gov.hmrc.bankaccountverificationexamplefrontend.example.routes.MakingPetsDigitalController.getDetails().url
 
   def langToLanguage(langCode: String): Language = langCode match {
     case "en" ⇒ En
