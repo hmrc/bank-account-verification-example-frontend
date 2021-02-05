@@ -39,7 +39,8 @@ class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
       continueUrl,
       messages,
       customisationsUrl,
-      address = Some(InitRequestAddress(List("Line 1", "Line 2"), Some("Town"), Some("Postcode"))))
+      address = Some(InitRequestAddress(List("Line 1", "Line 2"), Some("Town"), Some("Postcode"))),
+      timeoutConfig = Some(InitRequestTimeoutConfig("http://example.com", 120, None)))
 
     val url = s"${appConfig.bavfApiBaseUrl}/api/init"
     httpClient.POST[InitRequest, HttpResponse](url, request).map {
@@ -71,11 +72,12 @@ case class InitRequest(serviceIdentifier: String,
                        continueUrl: String,
                        messages: Option[InitRequestMessages] = None,
                        customisationsUrl: Option[String] = None,
-                       address: Option[InitRequestAddress] = None)
+                       address: Option[InitRequestAddress] = None,
+                       timeoutConfig: Option[InitRequestTimeoutConfig] = None)
 
 case class InitRequestMessages(en: JsObject, cy: Option[JsObject] = None)
 case class InitRequestAddress(lines: List[String], town: Option[String], postcode: Option[String])
-
+case class InitRequestTimeoutConfig(timeoutUrl: String, timeoutAmount: Int, timeoutKeepAliveUrl: Option[String])
 case class InitResponse(journeyId: String, startUrl: String, completeUrl: String, detailsUrl: Option[String])
 
 object InitResponse {
@@ -86,6 +88,7 @@ object InitResponse {
 object InitRequest {
   implicit val messagesWrites: OWrites[InitRequestMessages] = Json.writes[InitRequestMessages]
   implicit val addressWrites: OWrites[InitRequestAddress] = Json.writes[InitRequestAddress]
+  implicit val timeoutConfigWrites: OWrites[InitRequestTimeoutConfig] = Json.writes[InitRequestTimeoutConfig]
   implicit val writes: Writes[InitRequest] = Json.writes[InitRequest]
 }
 
