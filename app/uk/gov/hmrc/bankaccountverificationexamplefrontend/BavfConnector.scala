@@ -40,7 +40,7 @@ class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
       messages,
       customisationsUrl,
       address = Some(InitRequestAddress(List("Line 1", "Line 2"), Some("Town"), Some("Postcode"))),
-      timeoutConfig = Some(InitRequestTimeoutConfig("http://example.com", 120, None)))
+      timeoutConfig = Some(InitRequestTimeoutConfig("/bank-account-verification-example-frontend", 240, None)))
 
     val url = s"${appConfig.bavfApiBaseUrl}/api/init"
     httpClient.POST[InitRequest, HttpResponse](url, request).map {
