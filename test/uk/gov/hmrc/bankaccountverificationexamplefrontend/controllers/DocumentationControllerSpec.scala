@@ -16,13 +16,17 @@
 
 package uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers
 
+import com.codahale.metrics.SharedMetricRegistries
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.api.{Configuration, Environment}
+import play.api.{Application, Configuration, Environment}
+import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html.LandingPage
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -37,10 +41,19 @@ class DocumentationControllerSpec extends AnyWordSpec with Matchers with GuiceOn
   private val serviceConfig = new ServicesConfig(configuration)
   private val appConfig     = new AppConfig(configuration, serviceConfig)
 
+  override implicit lazy val app: Application = {
+    SharedMetricRegistries.clear()
+
+    new GuiceApplicationBuilder()
+        .overrides(bind[ServicesConfig].toInstance(serviceConfig))
+        .overrides(bind[AppConfig].toInstance(appConfig))
+        .build()
+  }
+
+
   val landingPage: LandingPage = app.injector.instanceOf[LandingPage]
 
-  private val controller = new DocumentationController(
-    appConfig, stubMessagesControllerComponents(), landingPage)
+  private val controller = app.injector.instanceOf[DocumentationController]
 
   "GET /" should {
     "return 200" in {

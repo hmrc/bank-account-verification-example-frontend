@@ -35,7 +35,7 @@ class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig)
   val authLoginStubUrl = servicesConfig.baseUrl("auth-login-stub") +
     authLoginStubPath + "?continue=" +
     exampleExternalUrl + "/bank-account-verification-example-frontend" +
-    uk.gov.hmrc.bankaccountverificationexamplefrontend.example.routes.MakingPetsDigitalController.getDetails().url
+    uk.gov.hmrc.bankaccountverificationexamplefrontend.example.routes.MakingPetsDigitalController.getDetails.url
 
   def langToLanguage(langCode: String): Language = langCode match {
     case "en" ⇒ En
