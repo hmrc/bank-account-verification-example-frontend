@@ -47,7 +47,7 @@
             }))
     }
 
-    @form(example.routes.MakingPetsDigitalController.postDetails()) {
+    @form(example.routes.MakingPetsDigitalController.postDetails) {
         @input(Input(value = detailsForm("petName").value,
             label = Label(content = HtmlContent(messages("label.petName"))),
             formGroupClasses = "form-field-group",
