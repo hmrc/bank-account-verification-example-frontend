@@ -51,7 +51,9 @@
             response.addressMatches.map(v => SummaryListRow(Key(HtmlContent("Account address matched")), Value(HtmlContent(v.toString)))),
             response.nonConsented.map(v => SummaryListRow(Key(HtmlContent("Account non-consented")), Value(HtmlContent(v.toString)))),
             response.subjectHasDeceased.map(v => SummaryListRow(Key(HtmlContent("Account owner deceased")), Value(HtmlContent(v.toString)))),
-            response.sortCodeBankName.map(v => SummaryListRow(Key(HtmlContent("Bank name")), Value(HtmlContent(v))))
+            response.sortCodeBankName.map(v => SummaryListRow(Key(HtmlContent("Bank name")), Value(HtmlContent(v)))),
+            response.sortCodeSupportsDirectDebit.map(v => SummaryListRow(Key(HtmlContent("Direct Debit Supported")), Value(HtmlContent(v.toString)))),
+            response.sortCodeSupportsDirectCredit.map(v => SummaryListRow(Key(HtmlContent("Direct Credit Supported")), Value(HtmlContent(v.toString))))
         ).flatten
     ))
 }
