@@ -52,8 +52,8 @@
         ) ++ Seq(
             response.accountExists.map(v => SummaryListRow(Key(HtmlContent("Account exists")), Value(HtmlContent(v.toString)))),
             response.sortCodeBankName.map(v => SummaryListRow(Key(HtmlContent("Bank name")), Value(HtmlContent(v)))),
-            response.sortCodeSupportsDirectDebit.map(v => SummaryListRow(Key(HtmlContent("Direct Debit Supported")), Value(HtmlContent(v.toString)))),
-            response.sortCodeSupportsDirectCredit.map(v => SummaryListRow(Key(HtmlContent("Direct Credit Supported")), Value(HtmlContent(v.toString))))
+            response.sortCodeSupportsDirectDebit.map(v => SummaryListRow(Key(HtmlContent("Direct debit supported")), Value(HtmlContent(v.toString)))),
+            response.sortCodeSupportsDirectCredit.map(v => SummaryListRow(Key(HtmlContent("Direct credit supported")), Value(HtmlContent(v.toString))))
         ).flatten
     ))
 }
