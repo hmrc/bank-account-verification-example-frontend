@@ -39,21 +39,21 @@
 
     @summary(SummaryList(
         rows = Seq(
-            SummaryListRow(Key(HtmlContent("Account type")), Value(HtmlContent("business"))),
-            SummaryListRow(Key(HtmlContent("Company name")), Value(HtmlContent(response.companyName))),
-            SummaryListRow(Key(HtmlContent("Sort code")), Value(HtmlContent(response.sortCode))),
-            SummaryListRow(Key(HtmlContent("Account number")), Value(HtmlContent(response.accountNumber))),
-            SummaryListRow(Key(HtmlContent("Roll number")), Value(HtmlContent(response.rollNumber.getOrElse("")))),
+            SummaryListRow(Key(HtmlContent("Account type")), Value(Text("business"))),
+            SummaryListRow(Key(HtmlContent("Company name")), Value(Text(response.companyName))),
+            SummaryListRow(Key(HtmlContent("Sort code")), Value(Text(response.sortCode))),
+            SummaryListRow(Key(HtmlContent("Account number")), Value(Text(response.accountNumber))),
+            SummaryListRow(Key(HtmlContent("Roll number")), Value(Text(response.rollNumber.getOrElse("")))),
             SummaryListRow(Key(HtmlContent("Address")), Value(HtmlContent(response.address.map(_.toString).getOrElse("")))),
-            SummaryListRow(Key(HtmlContent("Validation result")), Value(HtmlContent(response.accountNumberWithSortCodeIsValid.toString))),
-            SummaryListRow(Key(HtmlContent("Company name matches")), Value(HtmlContent(response.companyNameMatches.getOrElse("").toString))),
-            SummaryListRow(Key(HtmlContent("Company postcode matches")), Value(HtmlContent(response.companyPostCodeMatches.getOrElse("").toString))),
-            SummaryListRow(Key(HtmlContent("Company registration number matches")), Value(HtmlContent(response.companyRegistrationNumberMatches.getOrElse("").toString)))
+            SummaryListRow(Key(HtmlContent("Validation result")), Value(Text(response.accountNumberWithSortCodeIsValid.toString))),
+            SummaryListRow(Key(HtmlContent("Company name matches")), Value(Text(response.companyNameMatches.getOrElse("").toString))),
+            SummaryListRow(Key(HtmlContent("Company postcode matches")), Value(Text(response.companyPostCodeMatches.getOrElse("").toString))),
+            SummaryListRow(Key(HtmlContent("Company registration number matches")), Value(Text(response.companyRegistrationNumberMatches.getOrElse("").toString)))
         ) ++ Seq(
-            response.accountExists.map(v => SummaryListRow(Key(HtmlContent("Account exists")), Value(HtmlContent(v.toString)))),
-            response.sortCodeBankName.map(v => SummaryListRow(Key(HtmlContent("Bank name")), Value(HtmlContent(v)))),
-            response.sortCodeSupportsDirectDebit.map(v => SummaryListRow(Key(HtmlContent("Direct debit supported")), Value(HtmlContent(v.toString)))),
-            response.sortCodeSupportsDirectCredit.map(v => SummaryListRow(Key(HtmlContent("Direct credit supported")), Value(HtmlContent(v.toString))))
+            response.accountExists.map(v => SummaryListRow(Key(HtmlContent("Account exists")), Value(Text(v.toString)))),
+            response.sortCodeBankName.map(v => SummaryListRow(Key(HtmlContent("Bank name")), Value(Text(v)))),
+            response.sortCodeSupportsDirectDebit.map(v => SummaryListRow(Key(HtmlContent("Direct debit supported")), Value(Text(v.toString)))),
+            response.sortCodeSupportsDirectCredit.map(v => SummaryListRow(Key(HtmlContent("Direct credit supported")), Value(Text(v.toString))))
         ).flatten
     ))
 }
