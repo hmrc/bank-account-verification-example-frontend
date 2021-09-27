@@ -26,6 +26,13 @@ label.petType.cat = Cat 😸
 label.petType.dog = Dog 🐶
 label.petType.other = Other 🦖
 
+label.accountType.personal = Personal bank account
+label.accountType.business = Business bank account
+label.accountName = Name on the account
+label.sortCode = Sort code
+label.accountNumber = Account number
+label.rollNumber = Building society roll number
+
 error.summaryText = Error occurred
 error.petType.required = Select a pet type
 error.petName.required = Enter the pet's name

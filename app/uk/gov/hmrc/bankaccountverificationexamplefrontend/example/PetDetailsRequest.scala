@@ -26,6 +26,15 @@ import play.api.data.Forms._
 
 import scala.util.Try
 
+case class PrepopulatedAccountInformation(accountType: Option[String], accountName: Option[String], sortCode: Option[String], accountNumber: Option[String], rollNumber: Option[String])
+
+object PrepopulatedAccountInformation {
+  object formats {
+    implicit val reads  = Json.reads[PrepopulatedAccountInformation]
+    implicit val writes = Json.writes[PrepopulatedAccountInformation]
+  }
+}
+
 sealed trait PetTypeEnum
 object PetTypeEnum extends Enumerable.Implicits {
   case object Cat extends WithName("cat") with PetTypeEnum
@@ -40,15 +49,24 @@ object PetTypeEnum extends Enumerable.Implicits {
     Enumerable(values.map(v => v.toString -> v): _*)
 }
 
-case class PetDetailsRequest(petName: String, petType: PetTypeEnum, age: Int, description: Option[String])
+case class PetDetailsRequest(petName: String, petType: PetTypeEnum, age: Int, description: Option[String], accountType: Option[String], accountName: Option[String], sortCode: Option[String], accountNumber: Option[String], rollNumber: Option[String])
 
 object PetDetailsRequest {
   import PetTypeEnum._
 
   object formats {
+    import PrepopulatedAccountInformation.formats._
+
     implicit val accountTypeReads  = Json.reads[PetDetailsRequest]
     implicit val accountTypeWrites = Json.writes[PetDetailsRequest]
   }
+
+  val prepopulatedAccountInformationMapping: Mapping[PrepopulatedAccountInformation] = mapping(
+    "accountType" -> optional(text),
+    "accountName" -> optional(text),
+    "sortCode" -> optional(text),
+    "accountNumber" -> optional(text),
+    "rollNumber" -> optional(text))(PrepopulatedAccountInformation.apply)(PrepopulatedAccountInformation.unapply)
 
   val form: Form[PetDetailsRequest] =
     Form(
@@ -56,7 +74,13 @@ object PetDetailsRequest {
         "petName" -> nonEmptyText(maxLength = 64).verifying(petNameConstraint()),
         "petType" -> petTypeMapping,
         "age" -> number,
-        "description" -> optional(text)
+        "description" -> optional(text),
+
+        "accountType" -> optional(text),
+        "accountName" -> optional(text),
+        "sortCode" -> optional(text),
+        "accountNumber" -> optional(text),
+        "rollNumber" -> optional(text)
       )(PetDetailsRequest.apply)(PetDetailsRequest.unapply)
     )
 
