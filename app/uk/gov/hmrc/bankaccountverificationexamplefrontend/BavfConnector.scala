@@ -21,13 +21,14 @@ import play.api.libs.json._
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, Future, promise}
 
 class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
 
   def init(continueUrl: String,
            messages: Option[InitRequestMessages] = None,
-           customisationsUrl: Option[String] = None)(
+           customisationsUrl: Option[String] = None,
+           prepopulatedData: Option[InitRequestPrepopulatedData] = None)(
             implicit ec: ExecutionContext,
             hc: HeaderCarrier
           ): Future[Option[InitResponse]] = {
@@ -40,7 +41,8 @@ class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
       messages,
       customisationsUrl,
       address = Some(InitRequestAddress(List("Line 1", "Line 2"), Some("Town"), Some("Postcode"))),
-      timeoutConfig = Some(InitRequestTimeoutConfig("/bank-account-verification-example-frontend", 240, None)))
+      timeoutConfig = Some(InitRequestTimeoutConfig("/bank-account-verification-example-frontend", 240, None)),
+      prepopulatedData = prepopulatedData)
 
     val url = s"${appConfig.bavfApiBaseUrl}/api/init"
     httpClient.POST[InitRequest, HttpResponse](url, request).map {
@@ -72,6 +74,7 @@ case class InitRequest(serviceIdentifier: String,
                        continueUrl: String,
                        messages: Option[InitRequestMessages] = None,
                        customisationsUrl: Option[String] = None,
+                       prepopulatedData: Option[InitRequestPrepopulatedData] = None,
                        address: Option[InitRequestAddress] = None,
                        timeoutConfig: Option[InitRequestTimeoutConfig] = None)
 
@@ -79,6 +82,23 @@ case class InitRequestMessages(en: JsObject, cy: Option[JsObject] = None)
 case class InitRequestAddress(lines: List[String], town: Option[String], postcode: Option[String])
 case class InitRequestTimeoutConfig(timeoutUrl: String, timeoutAmount: Int, timeoutKeepAliveUrl: Option[String])
 case class InitResponse(journeyId: String, startUrl: String, completeUrl: String, detailsUrl: Option[String])
+case class InitRequestPrepopulatedData(accountType: Option[String] = None,
+                                       name: Option[String] = None,
+                                       sortCode: Option[String] = None,
+                                       accountNumber: Option[String] = None,
+                                       rollNumber: Option[String] = None)
+object InitRequestPrepopulatedData {
+  def from(accountType: Option[String] = None,
+           name: Option[String] = None,
+           sortCode: Option[String] = None,
+           accountNumber: Option[String] = None,
+           rollNumber: Option[String] = None): Option[InitRequestPrepopulatedData] = {
+    val definedValues = List(accountType, name, sortCode, accountNumber, rollNumber).flatten
+
+    if(definedValues.isEmpty) None
+    else Some(InitRequestPrepopulatedData(accountType = accountType, name = name, sortCode = sortCode, accountNumber = accountNumber, rollNumber = rollNumber))
+  }
+}
 
 object InitResponse {
   implicit def writes: OWrites[InitResponse] = Json.writes[InitResponse]
@@ -88,6 +108,7 @@ object InitResponse {
 object InitRequest {
   implicit val messagesWrites: OWrites[InitRequestMessages] = Json.writes[InitRequestMessages]
   implicit val addressWrites: OWrites[InitRequestAddress] = Json.writes[InitRequestAddress]
+  implicit val prepopulatedDataWrites: OWrites[InitRequestPrepopulatedData] = Json.writes[InitRequestPrepopulatedData]
   implicit val timeoutConfigWrites: OWrites[InitRequestTimeoutConfig] = Json.writes[InitRequestTimeoutConfig]
   implicit val writes: Writes[InitRequest] = Json.writes[InitRequest]
 }

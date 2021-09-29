@@ -24,7 +24,7 @@ import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.html.PetDetails
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html.{BusinessDonePage, PersonalDonePage}
-import uk.gov.hmrc.bankaccountverificationexamplefrontend.{AuthProviderId, BavfConnector, InitRequestMessages}
+import uk.gov.hmrc.bankaccountverificationexamplefrontend.{AuthProviderId, BavfConnector, InitRequestMessages, InitRequestPrepopulatedData}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -59,8 +59,15 @@ class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
           Future.successful(BadRequest(petDetails(form)))
         else {
           val continueUrl = s"${appConfig.exampleExternalUrl}/bank-account-verification-example-frontend/done"
+          val requestData = form.value.get
+          val initRequestPrepopulatedAccountInformation = InitRequestPrepopulatedData.from(
+            accountType = requestData.accountType,
+            name = requestData.accountName,
+            sortCode = requestData.sortCode,
+            accountNumber = requestData.accountNumber,
+            rollNumber = requestData.rollNumber)
 
-          connector.init(continueUrl, messages = requestMessages).map {
+          connector.init(continueUrl, messages = requestMessages, prepopulatedData = initRequestPrepopulatedAccountInformation).map {
             case Some(initResponse) => SeeOther(s"${appConfig.bavfWebBaseUrl}${initResponse.startUrl}")
             case None => InternalServerError
           }
