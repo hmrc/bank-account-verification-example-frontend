@@ -1,0 +1,63 @@
+@*
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
+
+@import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
+@import uk.gov.hmrc.bankaccountverificationexamplefrontend.BusinessCompleteResponse
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
+@import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.TemplateHelper._
+
+@this(layout: Layout, summary: GovukSummaryList, button: GovukButton, help: HmrcReportTechnicalIssue, hmrcInternalHeader: HmrcInternalHeader)
+@(response: BusinessCompleteResponse, changeAccountTypeUrl: String, continueUrl: String, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@customHeaderBlock = @{
+    hmrcInternalHeader(InternalHeader(
+        homepageUrl = "https://www.gov.uk/",
+        serviceName = Some(messages("service.name")),
+        serviceUrl = messages("service.homePageUrl"))
+    )
+}
+
+@layout(pageTitle = Some("bank-account-verification-example-frontend"), beforeContentBlock, customHeaderBlock = Some(customHeaderBlock)) {
+    <h1 class="govuk-heading-xl">@messages("checkYourAnswersPage.heading")</h1>
+    <h2 class="govuk-heading-m">@messages("service.done.subheading")</h2>
+    <p class="govuk-body">@{
+        messages("service.done.text")
+    }</p>
+
+    @summary(SummaryList(
+        classes = "confirm-page-summary",
+        rows = fixRows(response, Seq(
+            SummaryListRow(
+                Key(HtmlContent(messages("label.accountType"))),
+                Value(HtmlContent(messages("label.accountType.personal"))),
+                classes = "account-details-summary-row govuk-summary-list__row--no-border"),
+            SummaryListRow(Key(HtmlContent(messages("label.companyName"))), Value(Text(response.companyName)),
+                classes = "account-details-summary-row govuk-summary-list__row--no-border"),
+            SummaryListRow(Key(HtmlContent(messages("label.sortCode"))), Value(Text(response.sortCode)),
+                classes = "account-details-summary-row govuk-summary-list__row--no-border"),
+            SummaryListRow(Key(HtmlContent(messages("label.accountNumber"))), Value(Text(response.accountNumber)),
+                classes = "account-details-summary-row govuk-summary-list__row--no-border"),
+            SummaryListRow(Key(HtmlContent(messages("label.rollNumber"))), Value(Text(response.rollNumber.getOrElse(""))),
+                classes = "account-details-summary-row govuk-summary-list__row--no-border")
+        ), "business", changeAccountTypeUrl)
+    ))
+
+    @button(Button(content = HtmlContent(messages("label.checkSubmit")),
+        name = Some("continue"),
+        inputType = Some("submit"),
+        attributes = Map("id" → "continue"),
+        href = Some(continueUrl)))
+}

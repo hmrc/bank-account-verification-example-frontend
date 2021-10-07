@@ -16,12 +16,12 @@
 
 package uk.gov.hmrc.bankaccountverificationexamplefrontend
 
-import javax.inject.Inject
 import play.api.libs.json._
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 
-import scala.concurrent.{ExecutionContext, Future, promise}
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
 
@@ -125,7 +125,19 @@ case class CompleteResponseAddress(lines: List[String], town: Option[String], po
 
 object CompleteResponse {
   implicit val addressReads: Reads[CompleteResponseAddress] = Json.reads[CompleteResponseAddress]
+  implicit val addressWrites: Writes[CompleteResponseAddress] = Json.writes[CompleteResponseAddress]
+
   implicit val reads: Reads[CompleteResponse] = Json.reads[CompleteResponse]
+  implicit val writes: Writes[CompleteResponse] = Json.writes[CompleteResponse]
+}
+
+case class ExtendedCompleteResponse(completeResponse: CompleteResponse, extraInformation: Option[String])
+
+object ExtendewdCompleteResponse {
+  import CompleteResponse._
+
+  implicit val reads: Reads[ExtendedCompleteResponse] = Json.reads[ExtendedCompleteResponse]
+  implicit val writes: Writes[ExtendedCompleteResponse] = Json.writes[ExtendedCompleteResponse]
 }
 
 case class PersonalCompleteResponse(address: Option[CompleteResponseAddress],
@@ -146,7 +158,9 @@ case class PersonalCompleteResponse(address: Option[CompleteResponseAddress],
 
 object PersonalCompleteResponse {
   implicit val addressReads: Reads[CompleteResponseAddress] = Json.reads[CompleteResponseAddress]
+  implicit val addressWrites: Writes[CompleteResponseAddress] = Json.writes[CompleteResponseAddress]
   implicit val reads: Reads[PersonalCompleteResponse] = Json.reads[PersonalCompleteResponse]
+  implicit val writes: Writes[PersonalCompleteResponse] = Json.writes[PersonalCompleteResponse]
 }
 
 case class BusinessCompleteResponse(address: Option[CompleteResponseAddress],
@@ -166,7 +180,9 @@ case class BusinessCompleteResponse(address: Option[CompleteResponseAddress],
 
 object BusinessCompleteResponse {
   implicit val addressReads: Reads[CompleteResponseAddress] = Json.reads[CompleteResponseAddress]
+  implicit val addressWrites: Writes[CompleteResponseAddress] = Json.writes[CompleteResponseAddress]
   implicit val completeResponseReads: Reads[BusinessCompleteResponse] = Json.reads[BusinessCompleteResponse]
+  implicit val completeResponseWrites: Writes[BusinessCompleteResponse] = Json.writes[BusinessCompleteResponse]
 }
 
 sealed trait ReputationResponseEnum
