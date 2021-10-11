@@ -1,9 +1,14 @@
 startPage.heading = Verify a bank account
+moreDetailsPage.heading = Extra Information
+checkYourAnswersPage.heading = Check your answers before sending your application
 donePage.heading = Example screens end
 example.service.name = Verify a bank account
 
 service.name = Your service name here
 service.homePageUrl = /bank-account-verification-example-frontend/start
+
+service.moreDetails.subheading = Do you have any more information to help with your application?
+label.moreDetails = Extra Information
 
 service.done.subheading = We''ll redirect your users to the continueUrl.
 service.done.text = When you call the complete end point, this information will be available to your service:
@@ -26,12 +31,15 @@ label.petType.cat = Cat 😸
 label.petType.dog = Dog 🐶
 label.petType.other = Other 🦖
 
+label.accountType = Account type
 label.accountType.personal = Personal bank account
 label.accountType.business = Business bank account
 label.accountName = Name on the account
 label.sortCode = Sort code
 label.accountNumber = Account number
 label.rollNumber = Building society roll number
+label.change = Change
+label.checkSubmit = Submit
 
 error.summaryText = Error occurred
 error.petType.required = Select a pet type

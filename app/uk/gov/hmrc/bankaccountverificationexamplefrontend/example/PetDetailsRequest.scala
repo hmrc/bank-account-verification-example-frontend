@@ -113,3 +113,19 @@ object PetDetailsRequest {
       else Invalid(ValidationError("error.petType.required"))
     }
 }
+
+case class MorePetDetailsRequest(moreDetails: Option[String])
+
+object MorePetDetailsRequest {
+  object formats {
+    implicit val morePetDetailsRequestReads  = Json.reads[MorePetDetailsRequest]
+    implicit val morePetDetailsRequestWrites = Json.writes[MorePetDetailsRequest]
+  }
+
+  val form: Form[MorePetDetailsRequest] =
+    Form(
+      mapping(
+        "moreDetails" -> optional(text),
+      )(MorePetDetailsRequest.apply)(MorePetDetailsRequest.unapply)
+    )
+}

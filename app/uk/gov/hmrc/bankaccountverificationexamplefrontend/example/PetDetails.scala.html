@@ -110,55 +110,6 @@
             name = detailsForm("description").name, id = detailsForm("description").name,
             errorMessage = detailsForm("description").error.map(fe ⇒ ErrorMessage(content = HtmlContent(messages(fe.message))))))
 
-        <h2 class="govuk-heading-m govuk-hint">(Optional) Enter data to pre-populate</h2>
-        @radios(Radios(
-            idPrefix = None,
-            name = "accountType",
-            items = Seq(
-                RadioItem(content = HtmlContent(messages("label.accountType.personal")),
-                    id = Some("personal"),
-                    value = Some("personal"),
-                    checked = detailsForm("accountType").value.contains("personal")),
-                RadioItem(content = HtmlContent(messages("label.accountType.business")),
-                    id = Some("business"),
-                    value = Some("business"),
-                    checked = detailsForm("accountType").value.contains("business"))
-                ),
-            fieldset = Some(Fieldset(
-                legend = Some(Legend(
-                    content = Text("What type of account details are you providing?"),
-                    isPageHeading = false
-                ))
-            ))
-            )
-        )
-        @input(Input(value = detailsForm("accountName").value,
-            label = Label(content = HtmlContent(messages("label.accountName"))),
-            formGroupClasses = "form-field-group",
-            name = detailsForm("accountName").name, id = detailsForm("accountName").name,
-            errorMessage = detailsForm("accountName").error.map(fe ⇒ ErrorMessage(content = HtmlContent(messages(fe.message))))))
-        @input(Input(value = detailsForm("sortCode").value,
-            label = Label(content = HtmlContent(messages("label.sortCode"))),
-            classes = "govuk-input--width-5",
-            pattern = Some("[0-9]*"), inputmode = Some("numeric"),
-            formGroupClasses = "form-field-group",
-            name = detailsForm("sortCode").name, id = detailsForm("sortCode").name,
-            errorMessage = detailsForm("sortCode").error.map(fe ⇒ ErrorMessage(content = HtmlContent(messages(fe.message))))))
-        @input(Input(value = detailsForm("accountNumber").value,
-            label = Label(content = HtmlContent(messages("label.accountNumber"))),
-            classes = "govuk-input--width-10",
-            pattern = Some("[0-9]*"), inputmode = Some("numeric"),
-            formGroupClasses = "form-field-group",
-            name = detailsForm("accountNumber").name, id = detailsForm("accountNumber").name,
-            errorMessage = detailsForm("accountNumber").error.map(fe ⇒ ErrorMessage(content = HtmlContent(messages(fe.message))))))
-        @input(Input(value = detailsForm("rollNumber").value,
-            label = Label(content = HtmlContent(messages("label.rollNumber"))),
-            classes = "govuk-input--width-20",
-            formGroupClasses = "form-field-group",
-            name = detailsForm("rollNumber").name, id = detailsForm("rollNumber").name,
-            errorMessage = detailsForm("rollNumber").error.map(fe ⇒ ErrorMessage(content = HtmlContent(messages(fe.message))))))
-
-
         @govukButton(Button(content = HtmlContent(messages("label.continue")), name = Some("continue"), inputType = Some("submit")))
     }
 }
