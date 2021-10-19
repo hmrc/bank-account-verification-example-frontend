@@ -108,13 +108,11 @@ class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
             case Some(r) if r.accountType == "business" =>
               import BusinessCompleteResponse._
               addToSession(r)
-          }.map( s =>
-            form.value.flatMap(_.moreDetails).map(md =>
-              SeeOther(routes.MakingPetsDigitalController.getCheckYourAnswers(journeyId).url)
-                  .withSession(s + ("bavfefeMoreInformation" -> md))).get
-          )
+          }.map { s =>
+            SeeOther(routes.MakingPetsDigitalController.getCheckYourAnswers(journeyId).url)
+                .withSession(form.value.flatMap(_.moreDetails).fold(s)(md => s + ("bavfefeMoreInformation" -> md)))
+          }
         }
-
     } recoverWith { case _ =>
       Future.successful(SeeOther(appConfig.authLoginStubUrl))
     }
