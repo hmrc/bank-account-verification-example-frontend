@@ -35,9 +35,7 @@
 @layout(pageTitle = Some("bank-account-verification-example-frontend"), beforeContentBlock, customHeaderBlock = Some(customHeaderBlock)) {
     <h1 class="govuk-heading-xl">@messages("donePage.heading")</h1>
     <h2 class="govuk-heading-m">@messages("service.done.subheading")</h2>
-    <p class="govuk-body">@{
-        messages("service.done.text")
-    }</p>
+    <p class="govuk-body">@{messages("service.done.text")}</p>
 
     @summary(SummaryList(
         rows = Seq(
