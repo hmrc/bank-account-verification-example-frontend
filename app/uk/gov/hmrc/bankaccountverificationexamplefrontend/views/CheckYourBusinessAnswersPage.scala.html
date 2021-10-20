@@ -42,7 +42,7 @@
         rows = fixRows(response, Seq(
             SummaryListRow(
                 Key(HtmlContent(messages("label.accountType"))),
-                Value(HtmlContent(messages("label.accountType.personal"))),
+                Value(HtmlContent(messages("label.accountType.business"))),
                 classes = "account-details-summary-row govuk-summary-list__row--no-border"),
             SummaryListRow(Key(HtmlContent(messages("label.companyName"))), Value(Text(response.companyName)),
                 classes = "account-details-summary-row govuk-summary-list__row--no-border"),
@@ -51,8 +51,6 @@
             SummaryListRow(Key(HtmlContent(messages("label.accountNumber"))), Value(Text(response.accountNumber)),
                 classes = "account-details-summary-row govuk-summary-list__row--no-border"),
             SummaryListRow(Key(HtmlContent(messages("label.rollNumber"))), Value(Text(response.rollNumber.getOrElse(""))),
-                classes = "account-details-summary-row govuk-summary-list__row--no-border"),
-            SummaryListRow(Key(HtmlContent(messages("label.moreInformation"))), Value(Text(moreDetails.moreDetails.getOrElse(""))),
                 classes = "account-details-summary-row govuk-summary-list__row--no-border")
         ), "business", changeAccountTypeUrl)  :+
                 SummaryListRow(Key(HtmlContent(messages("label.moreInformation"))), Value(Text(moreDetails.moreDetails.getOrElse(""))),

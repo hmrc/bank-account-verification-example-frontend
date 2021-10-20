@@ -38,6 +38,7 @@ label.accountType = Account type
 label.accountType.personal = Personal bank account
 label.accountType.business = Business bank account
 label.accountName = Name on the account
+label.companyName = Company name on the account
 label.sortCode = Sort code
 label.accountNumber = Account number
 label.rollNumber = Building society roll number
