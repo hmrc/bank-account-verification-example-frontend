@@ -10,8 +10,11 @@ service.homePageUrl = /bank-account-verification-example-frontend/start
 service.moreDetails.subheading = Do you have any more information to help with your application?
 label.moreDetails = Extra Information
 
-service.done.subheading = The BAVFE journey is complete
-service.done.text = This information is available to your service:
+service.done.subheading = The Making Pets Digital journey is now complete
+service.done.text = The following information was passed into your service by BAVFE:
+
+service.checkYourAnswers.subheading = Check your answers
+service.checkYourAnswers.text = This is the information that we have collected throughout your journey.  Please check that it is all correct.
 
 label.start = View an example
 label.back = Back
