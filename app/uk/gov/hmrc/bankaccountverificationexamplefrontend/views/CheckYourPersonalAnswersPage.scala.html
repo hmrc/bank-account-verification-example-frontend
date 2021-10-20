@@ -15,20 +15,21 @@
 *@
 
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
-@import uk.gov.hmrc.bankaccountverificationexamplefrontend.PersonalCompleteResponse
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
+@import uk.gov.hmrc.bankaccountverificationexamplefrontend.PersonalCompleteResponse
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.TemplateHelper._
+@import uk.gov.hmrc.bankaccountverificationexamplefrontend.example
+@import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.MorePetDetailsRequest
 
-@this(layout: Layout, summary: GovukSummaryList, button: GovukButton, help: HmrcReportTechnicalIssue, hmrcInternalHeader: HmrcInternalHeader)
-@(response: PersonalCompleteResponse, changeAccountTypeUrl: String, continueUrl: String, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@this(layout: Layout, summary: GovukSummaryList, button: GovukButton, help: HmrcReportTechnicalIssue, govukHeader: GovukHeader)
+@(journeyId: String, response: PersonalCompleteResponse, moreDetails: MorePetDetailsRequest, changeAccountTypeUrl: String, continueUrl: String, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @customHeaderBlock = @{
-    hmrcInternalHeader(InternalHeader(
-        homepageUrl = "https://www.gov.uk/",
+    govukHeader(Header(
+        homepageUrl = Some("https://www.gov.uk/"),
         serviceName = Some(messages("service.name")),
-        serviceUrl = messages("service.homePageUrl"))
-    )
-}
+        serviceUrl = Some(messages("service.homePageUrl")),
+        containerClasses = None))}
 
 @layout(pageTitle = Some("bank-account-verification-example-frontend"), beforeContentBlock, customHeaderBlock = Some(customHeaderBlock)) {
     <h1 class="govuk-heading-xl">@messages("checkYourAnswersPage.heading")</h1>
@@ -52,12 +53,24 @@
                     classes = "account-details-summary-row govuk-summary-list__row--no-border"),
                 SummaryListRow(Key(HtmlContent(messages("label.rollNumber"))), Value(Text(response.rollNumber.getOrElse(""))),
                     classes = "account-details-summary-row govuk-summary-list__row--no-border")
-            ), "personal", changeAccountTypeUrl)
+            ), "personal", changeAccountTypeUrl) :+
+                    SummaryListRow(Key(HtmlContent(messages("label.moreInformation"))), Value(Text(moreDetails.moreDetails.getOrElse(""))),
+                        classes = "account-details-summary-row govuk-summary-list__row--no-border",
+                        actions = Some(Actions(items = Seq(
+                            ActionItem(
+                                href = s"""${example.routes.MakingPetsDigitalController.getMoreDetails(journeyId)}""",
+                                content = HtmlContent(
+                                    s"""
+                                      <span aria-hidden="true">${messages("label.change")}</span>
+                                      <span class="govuk-visually-hidden">${messages("label.change")} ${messages("label.accountDetails.heading")}</span>
+                                   """
+                                )
+                            )))))
         ))
 
     @button(Button(content = HtmlContent(messages("label.checkSubmit")),
         name = Some("continue"),
         inputType = Some("submit"),
         attributes = Map("id" → "continue"),
-        href = Some(continueUrl)))
+        href = Some(s"${continueUrl}/${journeyId}")))
 }

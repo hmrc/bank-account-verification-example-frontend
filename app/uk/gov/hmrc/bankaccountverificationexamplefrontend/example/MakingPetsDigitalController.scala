@@ -87,7 +87,11 @@ class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
 
   def getMoreDetails(journeyId: String): Action[AnyContent] = Action.async { implicit request =>
     authorised() {
-      Future.successful(Ok(morePetDetails(journeyId, MorePetDetailsRequest.form)))
+      val moreInformation = request.session.get("bavfefeMoreInformation").map(Json.parse).flatMap{ j =>
+          import MorePetDetailsRequest.formats._
+        Json.fromJson(j).asOpt
+      }
+      Future.successful(Ok(morePetDetails(journeyId, moreInformation.fold(MorePetDetailsRequest.form){mi => MorePetDetailsRequest.form.fill(mi)})))
     } recoverWith { case _ =>
       Future.successful(SeeOther(appConfig.authLoginStubUrl))
     }
@@ -101,16 +105,21 @@ class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
         if (form.hasErrors)
           Future.successful(BadRequest(morePetDetails(journeyId, form)))
         else {
+          import MorePetDetailsRequest.formats._
+          val moreDetails: MorePetDetailsRequest = form.get
+
           connector.complete(journeyId).map{
             case Some(r) if r.accountType == "personal" =>
               import PersonalCompleteResponse._
-              addToSession(r)
+              addToSession(r, moreDetails)
             case Some(r) if r.accountType == "business" =>
               import BusinessCompleteResponse._
-              addToSession(r)
+              addToSession(r, moreDetails)
           }.map { s =>
+              import MorePetDetailsRequest.formats._
+              val moreDetailsJsonText = Json.toJson[MorePetDetailsRequest](form.get).toString()
             SeeOther(routes.MakingPetsDigitalController.getCheckYourAnswers(journeyId).url)
-                .withSession(form.value.flatMap(_.moreDetails).fold(s)(md => s + ("bavfefeMoreInformation" -> md)))
+                .withSession(s)
           }
         }
     } recoverWith { case _ =>
@@ -125,10 +134,10 @@ class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
       val result = responseType match {
         case "personal" =>
           import PersonalCompleteResponse._
-          Ok(checkYourPersonalAnswersPage(personalResponse.get, changeUrl, s"$doneUrl/$journeyId"))
+          Ok(checkYourPersonalAnswersPage(journeyId, personalResponse.get, moreInformation.get, changeUrl, doneUrl))
         case "business" =>
           import BusinessCompleteResponse._
-          Ok(checkYourBusinessAnswersPage(businessResponse.get, changeUrl, s"$doneUrl/$journeyId"))
+          Ok(checkYourBusinessAnswersPage(journeyId, businessResponse.get, moreInformation.get, changeUrl, doneUrl))
         case _                                   => InternalServerError
       }
 
@@ -153,8 +162,8 @@ class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
 
       val (responseType, personalResponse, businessResponse, moreInformation) = retrieveFromSession()
       val result = responseType match {
-        case "personal" => personalResponse.fold(InternalServerError: Result)(r => Ok(personalDonePage(r)))
-        case "business" => businessResponse.fold(InternalServerError: Result)(r => Ok(businessDonePage(r)))
+        case "personal" => personalResponse.fold(InternalServerError: Result)(r => Ok(personalDonePage(r, moreInformation.get)))
+        case "business" => businessResponse.fold(InternalServerError: Result)(r => Ok(businessDonePage(r, moreInformation.get)))
         case _          => InternalServerError
       }
 
@@ -162,21 +171,31 @@ class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
     }
   }
 
-  private def addToSession(completeResponse: CompleteResponse)(implicit request: Request[AnyContent]): Session = {
+  private def addToSession(completeResponse: CompleteResponse, moreDetails: MorePetDetailsRequest)(implicit request: Request[AnyContent]): Session = {
     val bavfeResponseType = completeResponse.accountType
     val bavfeResponse = {
       if (bavfeResponseType == "personal") Json.toJson(completeResponse.personal.get).toString()
       else if (bavfeResponseType == "business") Json.toJson(completeResponse.business.get).toString()
       else throw new IllegalStateException("Session is in inconsistent state")
     }
+    import MorePetDetailsRequest.formats._
+    val moreDetailsText = Json.toJson(moreDetails).toString()
 
-    request.session + ("bavfeResponseType" -> bavfeResponseType) + ("bavfeResponse" -> bavfeResponse)
+    request.session +
+        ("bavfeResponseType" -> bavfeResponseType) +
+        ("bavfeResponse" -> bavfeResponse) +
+        ("bavfefeMoreInformation" -> moreDetailsText)
   }
 
-  private def retrieveFromSession()(implicit request: Request[AnyContent]): (String, Option[PersonalCompleteResponse], Option[BusinessCompleteResponse], Option[String]) = {
+  private def retrieveFromAndClearSession()(implicit request: Request[AnyContent]): ((String, Option[PersonalCompleteResponse], Option[BusinessCompleteResponse], Option[MorePetDetailsRequest]), Session) = {
+    val result = retrieveFromSession()
+    (result, (request.session -- Seq("bavfeResponseType", "bavfeResponse", "bavfefeMoreInformation")))
+  }
+
+  private def retrieveFromSession()(implicit request: Request[AnyContent]): (String, Option[PersonalCompleteResponse], Option[BusinessCompleteResponse], Option[MorePetDetailsRequest]) = {
     val responseType = request.session.get("bavfeResponseType").get
     val responseJsonText = request.session.get("bavfeResponse").get
-    val moreInformation = request.session.get("bavfefeMoreInformation")
+    val moreInformationText = request.session.get("bavfefeMoreInformation").get
 
     val (personal, business) = responseType match {
       case "personal" =>
@@ -186,6 +205,8 @@ class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
         import BusinessCompleteResponse._
         (None, Json.fromJson[BusinessCompleteResponse](Json.parse(responseJsonText)).asOpt)
     }
+    import MorePetDetailsRequest.formats._
+    val moreInformation = Json.fromJson[MorePetDetailsRequest](Json.parse(moreInformationText)).asOpt
 
     (responseType, personal, business, moreInformation)
   }
