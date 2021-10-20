@@ -58,9 +58,9 @@ class AdvancedExampleController @Inject()(
     implicit request =>
       connector.complete(journeyId).map {
         case Some(r) if r.accountType == "personal" =>
-          Ok(personalDonePage(r.personal.get, beforeContentBlock = Some(beforeContentBlock())))
+          Ok(personalDonePage(r.personal.get, MorePetDetailsRequest(None), beforeContentBlock = Some(beforeContentBlock())))
         case Some(r) if r.accountType == "business" =>
-          Ok(businessDonePage(r.business.get, beforeContentBlock = Some(beforeContentBlock())))
+          Ok(businessDonePage(r.business.get, MorePetDetailsRequest(None), beforeContentBlock = Some(beforeContentBlock())))
         case None => InternalServerError
       }
   }

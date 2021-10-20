@@ -10,8 +10,8 @@ service.homePageUrl = W /bank-account-verification-example-frontend/start
 service.moreDetails.subheading = W Do you have any more information to help with your application?
 label.moreDetails = W Extra Information
 
-service.done.subheading = W We''ll redirect your users to the continueUrl.
-service.done.text = W The following information will be made available to your service when calling the complete endpoint.
+service.done.subheading = W The BAVFE journey is complete
+service.done.text = W This information is available to your service:
 
 label.start = W View an example
 label.back = W Back
@@ -37,6 +37,7 @@ label.accountName = W Name on the account
 label.sortCode = W Sort code
 label.accountNumber = W Account number
 label.rollNumber = W Building society roll number
+label.moreInformation = W More Information
 label.change = W Change
 label.checkSubmit = W Submit
 

@@ -15,18 +15,19 @@
  *@
 
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
-@import uk.gov.hmrc.bankaccountverificationexamplefrontend.PersonalCompleteResponse
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
+@import uk.gov.hmrc.bankaccountverificationexamplefrontend.PersonalCompleteResponse
+@import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.MorePetDetailsRequest
 
-@this(layout: Layout, summary: GovukSummaryList, help: HmrcReportTechnicalIssue, hmrcInternalHeader: HmrcInternalHeader)
-@(response: PersonalCompleteResponse, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@this(layout: Layout, summary: GovukSummaryList, help: HmrcReportTechnicalIssue, govukHeader: GovukHeader)
+@(response: PersonalCompleteResponse, moreDetails: MorePetDetailsRequest, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @customHeaderBlock = @{
-    hmrcInternalHeader(InternalHeader(
-        homepageUrl = "https://www.gov.uk/",
+    govukHeader(Header(
+        homepageUrl = Some("https://www.gov.uk/"),
         serviceName = Some(messages("service.name")),
-        serviceUrl = messages("service.homePageUrl"))
-    )
+        serviceUrl = Some(messages("service.homePageUrl")),
+        containerClasses = None))
 }
 
 @layout(pageTitle = Some("bank-account-verification-example-frontend"), beforeContentBlock, customHeaderBlock = Some(customHeaderBlock)) {
@@ -43,6 +44,7 @@
             SummaryListRow(Key(HtmlContent("Sort code")), Value(Text(response.sortCode))),
             SummaryListRow(Key(HtmlContent("Account number")), Value(Text(response.accountNumber))),
             SummaryListRow(Key(HtmlContent("Roll number")), Value(Text(response.rollNumber.getOrElse("")))),
+            SummaryListRow(Key(HtmlContent("More Information")), Value(Text(moreDetails.moreDetails.getOrElse("")))),
             SummaryListRow(Key(HtmlContent("Address")), Value(HtmlContent(response.address.map(_.toString).getOrElse("")))),
             SummaryListRow(Key(HtmlContent("Validation result")), Value(Text(response.accountNumberWithSortCodeIsValid.toString)))
         ) ++ Seq(
