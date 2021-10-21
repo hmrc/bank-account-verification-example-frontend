@@ -15,14 +15,13 @@
 *@
 
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
-@import uk.gov.hmrc.bankaccountverificationexamplefrontend.BusinessCompleteResponse
+@import uk.gov.hmrc.bankaccountverificationexamplefrontend.{BusinessCompleteResponse, example}
+@import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.{MorePetDetailsRequest, PetDetailsRequest}
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.TemplateHelper._
-@import uk.gov.hmrc.bankaccountverificationexamplefrontend.example
-@import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.MorePetDetailsRequest
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
 
 @this(layout: Layout, summary: GovukSummaryList, button: GovukButton, help: HmrcReportTechnicalIssue, govukHeader: GovukHeader)
-@(journeyId: String, response: BusinessCompleteResponse, moreDetails: MorePetDetailsRequest, changeAccountTypeUrl: String, continueUrl: String, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(journeyId: String, petDetailsRequest: PetDetailsRequest, response: BusinessCompleteResponse, moreDetails: MorePetDetailsRequest, changePetDetailsUrl: String, changeAccountTypeUrl: String, continueUrl: String, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @customHeaderBlock = @{
     govukHeader(Header(
@@ -40,6 +39,17 @@
     @summary(SummaryList(
         classes = "confirm-page-summary",
         rows = fixRows(response, Seq(
+            SummaryListRow(
+                Key(HtmlContent(messages("label.petName"))), Value(Text(petDetailsRequest.petName)),
+                classes = "account-details-summary-row govuk-summary-list__row--no-border"),
+            SummaryListRow(Key(HtmlContent(messages("label.petType"))), Value(Text(petDetailsRequest.petType.toString)),
+                classes = "account-details-summary-row govuk-summary-list__row--no-border"),
+            SummaryListRow(Key(HtmlContent(messages("label.petAge"))), Value(Text(petDetailsRequest.age.toString)),
+                classes = "account-details-summary-row govuk-summary-list__row--no-border"),
+            SummaryListRow(Key(HtmlContent(messages("label.petDescription"))), Value(Text(petDetailsRequest.description.getOrElse(""))),
+                classes = "account-details-summary-row govuk-summary-list__row--no-border")
+        ), "business", changePetDetailsUrl) ++
+                fixRows(response, Seq(
             SummaryListRow(
                 Key(HtmlContent(messages("label.accountType"))),
                 Value(HtmlContent(messages("label.accountType.business"))),
