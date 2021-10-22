@@ -17,18 +17,17 @@
 package uk.gov.hmrc.bankaccountverificationexamplefrontend.example
 
 import play.api.data.Form
-
-import javax.inject.{Inject, Singleton}
 import play.api.i18n.{Lang, MessagesApi}
-import play.api.libs.json.{JsError, JsSuccess, Json}
+import play.api.libs.json.Json
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.html.PetDetails
-import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html.{BusinessDonePage, CheckYourBusinessAnswersPage, CheckYourPersonalAnswersPage, MorePetDetailsPage, PersonalDonePage}
-import uk.gov.hmrc.bankaccountverificationexamplefrontend.{AuthProviderId, BavfConnector, BusinessCompleteResponse, CompleteResponse, InitRequestMessages, InitRequestPrepopulatedData, PersonalCompleteResponse}
+import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html._
+import uk.gov.hmrc.bankaccountverificationexamplefrontend._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -49,34 +48,41 @@ class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
 
   val getDetails: Action[AnyContent] = Action.async { implicit request =>
     authorised() {
-      Future.successful(Ok(petDetails(PetDetailsRequest.form)))
+      val (petDetailsRequest, _, _, _, _) = retrieveFromSession()
+      val form = petDetailsRequest.fold(PetDetailsRequest.form)(PetDetailsRequest.form.fill)
+      Future.successful(Ok(petDetails(form)))
     } recoverWith { case _ =>
       Future.successful(SeeOther(appConfig.authLoginStubUrl))
     }
   }
 
   val continueUrl = s"${appConfig.exampleExternalUrl}/bank-account-verification-example-frontend/moreDetails"
-  val changeUrl = s"${appConfig.exampleExternalUrl}/bank-account-verification-example-frontend/changeDetails"
-  val doneUrl = s"${appConfig.exampleExternalUrl}/bank-account-verification-example-frontend/done"
+  val changeAccountTypeUrl = s"${appConfig.exampleExternalUrl}/bank-account-verification-example-frontend/changeDetails"
+  val doneUrl = s"${appConfig.exampleExternalUrl}/bank-account-verification-example-frontend/postCheckYourDetails"
+  val changePetDetailsUrl = s"${appConfig.exampleExternalUrl}/bank-account-verification-example-frontend/start"
 
   val postDetails: Action[AnyContent] = Action.async { implicit request =>
     authorised().retrieve(AuthProviderId.retrieval) {
       authProviderId =>
-        val form = PetDetailsRequest.form.bindFromRequest()
+        val petDetailsRequestForm = PetDetailsRequest.form.bindFromRequest()
+        val petDetailsRequest = petDetailsRequestForm.get
+        val (_, accountType, personal, business, _) = retrieveFromSession()
 
-        if (form.hasErrors)
-          Future.successful(BadRequest(petDetails(form)))
+        if (petDetailsRequestForm.hasErrors)
+          Future.successful(BadRequest(petDetails(petDetailsRequestForm)))
         else {
-          val requestData = form.value.get
-          val initRequestPrepopulatedAccountInformation = InitRequestPrepopulatedData.from(
-            accountType = requestData.accountType,
-            name = requestData.accountName,
-            sortCode = requestData.sortCode,
-            accountNumber = requestData.accountNumber,
-            rollNumber = requestData.rollNumber)
+          val initRequestPrepopulatedAccountInformation = accountType.fold(None: Option[InitRequestPrepopulatedData]) { at =>
+              val x@(att, an, sc, anum, rn) = if(at == "personal")
+                (at, personal.get.accountName, personal.get.sortCode, personal.get.accountNumber, personal.get.rollNumber)
+              else
+                (at, business.get.companyName, business.get.sortCode, business.get.accountNumber, business.get.rollNumber)
 
+            InitRequestPrepopulatedData.from(accountType = att, name = an, sortCode = sc, accountNumber = anum, rollNumber = rn)
+          }
+
+          val newSession = addToSession(petDetailsRequest)
           connector.init(continueUrl, messages = requestMessages, prepopulatedData = initRequestPrepopulatedAccountInformation).map {
-            case Some(initResponse) => SeeOther(s"${appConfig.bavfWebBaseUrl}${initResponse.startUrl}")
+            case Some(initResponse) => SeeOther(s"${appConfig.bavfWebBaseUrl}${initResponse.startUrl}").withSession(newSession)
             case None               => InternalServerError
           }
         }
@@ -105,15 +111,12 @@ class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
         if (form.hasErrors)
           Future.successful(BadRequest(morePetDetails(journeyId, form)))
         else {
-          import MorePetDetailsRequest.formats._
           val moreDetails: MorePetDetailsRequest = form.get
 
           connector.complete(journeyId).map{
             case Some(r) if r.accountType == "personal" =>
-              import PersonalCompleteResponse._
               addToSession(r, moreDetails)
             case Some(r) if r.accountType == "business" =>
-              import BusinessCompleteResponse._
               addToSession(r, moreDetails)
           }.map { s =>
               import MorePetDetailsRequest.formats._
@@ -129,18 +132,14 @@ class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
 
   def getCheckYourAnswers(journeyId: String): Action[AnyContent] = Action.async { implicit request =>
     authorised() {
-
-      val (responseType, personalResponse, businessResponse, moreInformation) = retrieveFromSession()
+      val (petDetailsRequest, responseType, personalResponse, businessResponse, moreInformation) = retrieveFromSession()
       val result = responseType match {
-        case "personal" =>
-          import PersonalCompleteResponse._
-          Ok(checkYourPersonalAnswersPage(journeyId, personalResponse.get, moreInformation.get, changeUrl, doneUrl))
-        case "business" =>
-          import BusinessCompleteResponse._
-          Ok(checkYourBusinessAnswersPage(journeyId, businessResponse.get, moreInformation.get, changeUrl, doneUrl))
+        case Some("personal") =>
+          Ok(checkYourPersonalAnswersPage(journeyId, petDetailsRequest.get, personalResponse.get, moreInformation.get, changePetDetailsUrl, changeAccountTypeUrl, doneUrl))
+        case Some("business") =>
+          Ok(checkYourBusinessAnswersPage(journeyId, petDetailsRequest.get, businessResponse.get, moreInformation.get, changePetDetailsUrl, changeAccountTypeUrl, doneUrl))
         case _                                   => InternalServerError
       }
-
       Future.successful(result)
     }
   }
@@ -157,18 +156,23 @@ class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
     }
   }
 
-  def done(journeyId: String): Action[AnyContent] = Action.async { implicit request =>
+  def postCheckYourAnswers(journeyId: String): Action[AnyContent] = Action.async { implicit request =>
     authorised().retrieve(AuthProviderId.retrieval) { authProviderId =>
 
-      val (responseType, personalResponse, businessResponse, moreInformation) = retrieveFromSession()
+      val ((petDetailsRequest, responseType, personalResponse, businessResponse, moreInformation), newSession) = retrieveFromAndClearSession()
       val result = responseType match {
-        case "personal" => personalResponse.fold(InternalServerError: Result)(r => Ok(personalDonePage(r, moreInformation.get)))
-        case "business" => businessResponse.fold(InternalServerError: Result)(r => Ok(businessDonePage(r, moreInformation.get)))
-        case _          => InternalServerError
+        case Some("personal") => personalResponse.fold(InternalServerError: Result)(r => Ok(personalDonePage(petDetailsRequest.get, r, moreInformation.get)))
+        case Some("business") => businessResponse.fold(InternalServerError: Result)(r => Ok(businessDonePage(petDetailsRequest.get, r, moreInformation.get)))
+        case _                => InternalServerError
       }
 
-      Future.successful(result)
+      Future.successful(result.withSession(newSession))
     }
+  }
+
+  private def addToSession(petDetailsRequest: PetDetailsRequest)(implicit request: Request[AnyContent]): Session = {
+    import PetDetailsRequest.formats._
+    (request.session + ("mpdDetails" -> Json.toJson(petDetailsRequest).toString))
   }
 
   private def addToSession(completeResponse: CompleteResponse, moreDetails: MorePetDetailsRequest)(implicit request: Request[AnyContent]): Session = {
@@ -178,8 +182,11 @@ class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
       else if (bavfeResponseType == "business") Json.toJson(completeResponse.business.get).toString()
       else throw new IllegalStateException("Session is in inconsistent state")
     }
-    import MorePetDetailsRequest.formats._
-    val moreDetailsText = Json.toJson(moreDetails).toString()
+
+    val moreDetailsText = {
+      import MorePetDetailsRequest.formats._
+      Json.toJson(moreDetails).toString()
+    }
 
     request.session +
         ("bavfeResponseType" -> bavfeResponseType) +
@@ -187,28 +194,37 @@ class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
         ("bavfefeMoreInformation" -> moreDetailsText)
   }
 
-  private def retrieveFromAndClearSession()(implicit request: Request[AnyContent]): ((String, Option[PersonalCompleteResponse], Option[BusinessCompleteResponse], Option[MorePetDetailsRequest]), Session) = {
+  private def retrieveFromAndClearSession()(implicit request: Request[AnyContent]): ((Option[PetDetailsRequest], Option[String], Option[PersonalCompleteResponse], Option[BusinessCompleteResponse], Option[MorePetDetailsRequest]), Session) = {
     val result = retrieveFromSession()
-    (result, (request.session -- Seq("bavfeResponseType", "bavfeResponse", "bavfefeMoreInformation")))
+    (result, (request.session -- Seq("mpdDetails", "bavfeResponseType", "bavfeResponse", "bavfefeMoreInformation")))
   }
 
-  private def retrieveFromSession()(implicit request: Request[AnyContent]): (String, Option[PersonalCompleteResponse], Option[BusinessCompleteResponse], Option[MorePetDetailsRequest]) = {
-    val responseType = request.session.get("bavfeResponseType").get
-    val responseJsonText = request.session.get("bavfeResponse").get
-    val moreInformationText = request.session.get("bavfefeMoreInformation").get
+  private def retrieveFromSession()(implicit request: Request[AnyContent]): (Option[PetDetailsRequest], Option[String], Option[PersonalCompleteResponse], Option[BusinessCompleteResponse], Option[MorePetDetailsRequest]) = {
+    val petDetailsRequestText = request.session.get("mpdDetails")
+    val responseType = request.session.get("bavfeResponseType")
+    val responseJsonText = request.session.get("bavfeResponse")
+    val moreInformationText = request.session.get("bavfefeMoreInformation")
 
-    val (personal, business) = responseType match {
-      case "personal" =>
-        import PersonalCompleteResponse._
-        (Json.fromJson[PersonalCompleteResponse](Json.parse(responseJsonText)).asOpt, None)
-      case "business" =>
-        import BusinessCompleteResponse._
-        (None, Json.fromJson[BusinessCompleteResponse](Json.parse(responseJsonText)).asOpt)
+    val petDetailsRequest = petDetailsRequestText.flatMap{ pdr =>
+      import PetDetailsRequest.formats._
+      Json.fromJson[PetDetailsRequest](Json.parse(pdr)).asOpt
     }
-    import MorePetDetailsRequest.formats._
-    val moreInformation = Json.fromJson[MorePetDetailsRequest](Json.parse(moreInformationText)).asOpt
 
-    (responseType, personal, business, moreInformation)
+    val (personal, business) = (responseType, responseJsonText) match {
+      case (Some("personal"), Some(rjt)) =>
+        import PersonalCompleteResponse._
+        (Json.fromJson[PersonalCompleteResponse](Json.parse(rjt)).asOpt, None)
+      case (Some("business"), Some(rjt)) =>
+        import BusinessCompleteResponse._
+        (None, Json.fromJson[BusinessCompleteResponse](Json.parse(rjt)).asOpt)
+      case (None, None) => (None, None)
+    }
+    val moreInformation = {
+      import MorePetDetailsRequest.formats._
+      moreInformationText.fold(None: Option[MorePetDetailsRequest]){mit => Json.fromJson[MorePetDetailsRequest](Json.parse(mit)).asOpt}
+    }
+
+    (petDetailsRequest, responseType, personal, business, moreInformation)
   }
 
   private def requestMessages(implicit messagesApi: MessagesApi) = {

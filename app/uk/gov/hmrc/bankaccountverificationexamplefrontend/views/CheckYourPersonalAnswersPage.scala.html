@@ -15,14 +15,14 @@
 *@
 
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
-@import uk.gov.hmrc.bankaccountverificationexamplefrontend.PersonalCompleteResponse
-@import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.TemplateHelper._
-@import uk.gov.hmrc.bankaccountverificationexamplefrontend.example
+@import uk.gov.hmrc.bankaccountverificationexamplefrontend.{PersonalCompleteResponse, example}
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.MorePetDetailsRequest
+@import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.TemplateHelper._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
+@import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.PetDetailsRequest
 
 @this(layout: Layout, summary: GovukSummaryList, button: GovukButton, help: HmrcReportTechnicalIssue, govukHeader: GovukHeader)
-@(journeyId: String, response: PersonalCompleteResponse, moreDetails: MorePetDetailsRequest, changeAccountTypeUrl: String, continueUrl: String, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(journeyId: String, petDetailsRequest: PetDetailsRequest, response: PersonalCompleteResponse, moreDetails: MorePetDetailsRequest, changePetDetailsUrl: String, changeAccountTypeUrl: String, continueUrl: String, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @customHeaderBlock = @{
     govukHeader(Header(
@@ -40,6 +40,17 @@
             classes = "confirm-page-summary",
             rows = fixRows(response, Seq(
                 SummaryListRow(
+                    Key(HtmlContent(messages("label.petName"))), Value(Text(petDetailsRequest.petName)),
+                    classes = "account-details-summary-row govuk-summary-list__row--no-border"),
+                SummaryListRow(Key(HtmlContent(messages("label.petType"))), Value(Text(petDetailsRequest.petType.toString)),
+                    classes = "account-details-summary-row govuk-summary-list__row--no-border"),
+                SummaryListRow(Key(HtmlContent(messages("label.petAge"))), Value(Text(petDetailsRequest.age.toString)),
+                    classes = "account-details-summary-row govuk-summary-list__row--no-border"),
+                SummaryListRow(Key(HtmlContent(messages("label.petDescription"))), Value(Text(petDetailsRequest.description.getOrElse(""))),
+                    classes = "account-details-summary-row govuk-summary-list__row--no-border")
+            ), "personal", changePetDetailsUrl) ++
+                    fixRows(response, Seq(
+                SummaryListRow(
                     Key(HtmlContent(messages("label.accountType"))),
                     Value(HtmlContent(messages("label.accountType.personal"))),
                     classes = "account-details-summary-row govuk-summary-list__row--no-border"),
@@ -52,18 +63,18 @@
                 SummaryListRow(Key(HtmlContent(messages("label.rollNumber"))), Value(Text(response.rollNumber.getOrElse(""))),
                     classes = "account-details-summary-row govuk-summary-list__row--no-border")
             ), "personal", changeAccountTypeUrl) :+
-                    SummaryListRow(Key(HtmlContent(messages("label.moreInformation"))), Value(Text(moreDetails.moreDetails.getOrElse(""))),
-                        classes = "account-details-summary-row govuk-summary-list__row--no-border",
-                        actions = Some(Actions(items = Seq(
-                            ActionItem(
-                                href = s"""${example.routes.MakingPetsDigitalController.getMoreDetails(journeyId)}""",
-                                content = HtmlContent(
-                                    s"""
-                                      <span aria-hidden="true">${messages("label.change")}</span>
-                                      <span class="govuk-visually-hidden">${messages("label.change")} ${messages("label.accountDetails.heading")}</span>
-                                   """
-                                )
-                            )))))
+                SummaryListRow(Key(HtmlContent(messages("label.moreInformation"))), Value(Text(moreDetails.moreDetails.getOrElse(""))),
+                    classes = "account-details-summary-row govuk-summary-list__row--no-border",
+                    actions = Some(Actions(items = Seq(
+                        ActionItem(
+                            href = s"""${example.routes.MakingPetsDigitalController.getMoreDetails(journeyId)}""",
+                            content = HtmlContent(
+                                s"""
+                                  <span aria-hidden="true">${messages("label.change")}</span>
+                                  <span class="govuk-visually-hidden">${messages("label.change")} ${messages("label.accountDetails.heading")}</span>
+                               """
+                            )
+                        )))))
         ))
 
     @button(Button(content = HtmlContent(messages("label.checkSubmit")),

@@ -4,14 +4,15 @@
 ->          /hmrc-frontend                   hmrcfrontend.Routes
 GET         /                                uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers.DocumentationController.display
 GET         /language/:lang                  uk.gov.hmrc.bankaccountverificationexamplefrontend.example.ExampleLanguageController.switchToLanguage(lang: String)
+
 GET         /start                           uk.gov.hmrc.bankaccountverificationexamplefrontend.example.MakingPetsDigitalController.getDetails
 POST        /transfer                        uk.gov.hmrc.bankaccountverificationexamplefrontend.example.MakingPetsDigitalController.postDetails
+
 GET         /moreDetails/:journeyId          uk.gov.hmrc.bankaccountverificationexamplefrontend.example.MakingPetsDigitalController.getMoreDetails(journeyId)
 POST        /moreDetails/:journeyId          uk.gov.hmrc.bankaccountverificationexamplefrontend.example.MakingPetsDigitalController.postMoreDetails(journeyId)
+
 GET         /checkYourDetails/:journeyId     uk.gov.hmrc.bankaccountverificationexamplefrontend.example.MakingPetsDigitalController.getCheckYourAnswers(journeyId)
+GET         /postCheckYourDetails/:journeyId uk.gov.hmrc.bankaccountverificationexamplefrontend.example.MakingPetsDigitalController.postCheckYourAnswers(journeyId)
 GET         /changeDetails                   uk.gov.hmrc.bankaccountverificationexamplefrontend.example.MakingPetsDigitalController.changeYourAnswers(accountType: Option[String], accountName: Option[String], sortCode: Option[String], accountNumber: Option[String], rollNumber: Option[String])
-GET         /done/:journeyId                 uk.gov.hmrc.bankaccountverificationexamplefrontend.example.MakingPetsDigitalController.done(journeyId)
-GET         /advanced/start                  uk.gov.hmrc.bankaccountverificationexamplefrontend.example.AdvancedExampleController.start
-POST        /advanced/transfer               uk.gov.hmrc.bankaccountverificationexamplefrontend.example.AdvancedExampleController.transfer
-GET         /advanced/done/:journeyId        uk.gov.hmrc.bankaccountverificationexamplefrontend.example.AdvancedExampleController.done(journeyId)
+
 GET         /assets/*file                    controllers.Assets.versioned(path = "/public", file: Asset)

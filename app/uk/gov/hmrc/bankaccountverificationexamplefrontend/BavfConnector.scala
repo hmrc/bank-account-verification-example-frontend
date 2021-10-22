@@ -98,6 +98,10 @@ object InitRequestPrepopulatedData {
     if(definedValues.isEmpty) None
     else Some(InitRequestPrepopulatedData(accountType = accountType, name = name, sortCode = sortCode, accountNumber = accountNumber, rollNumber = rollNumber))
   }
+
+  def from(accountType: String, name: String, sortCode: String, accountNumber: String, rollNumber: Option[String]): Option[InitRequestPrepopulatedData] = {
+    from(Some(accountType), Some(name), Some(sortCode), Some(accountNumber), rollNumber)
+  }
 }
 
 object InitResponse {

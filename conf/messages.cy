@@ -1,5 +1,5 @@
 startPage.heading = W Verify a bank account
-moreDetailsPage.heading = W Extra Information
+moreDetailsPage.heading = W More information
 checkYourAnswersPage.heading = W Check your answers before sending your application
 donePage.heading = W Journey complete
 example.service.name = W Verify a bank account
@@ -8,7 +8,7 @@ service.name = W Your service name here
 service.homePageUrl = W /bank-account-verification-example-frontend/start
 
 service.moreDetails.subheading = W Do you have any more information to help with your application?
-label.moreDetails = W Extra Information
+label.moreDetails = W More information
 
 service.done.subheading = W The Making Pets Digital journey is now complete
 service.done.text = W The following information was passed into your service by BAVFE:
