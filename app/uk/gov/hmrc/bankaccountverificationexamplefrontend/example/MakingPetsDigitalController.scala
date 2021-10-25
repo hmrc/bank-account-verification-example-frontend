@@ -65,12 +65,13 @@ class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
     authorised().retrieve(AuthProviderId.retrieval) {
       authProviderId =>
         val petDetailsRequestForm = PetDetailsRequest.form.bindFromRequest()
-        val petDetailsRequest = petDetailsRequestForm.get
-        val (_, accountType, personal, business, _) = retrieveFromSession()
 
         if (petDetailsRequestForm.hasErrors)
           Future.successful(BadRequest(petDetails(petDetailsRequestForm)))
         else {
+          val petDetailsRequest = petDetailsRequestForm.get
+          val (_, accountType, personal, business, _) = retrieveFromSession()
+
           val initRequestPrepopulatedAccountInformation = accountType.fold(None: Option[InitRequestPrepopulatedData]) { at =>
               val x@(att, an, sc, anum, rn) = if(at == "personal")
                 (at, personal.get.accountName, personal.get.sortCode, personal.get.accountNumber, personal.get.rollNumber)
