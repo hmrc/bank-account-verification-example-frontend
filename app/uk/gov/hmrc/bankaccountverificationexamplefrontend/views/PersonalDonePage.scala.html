@@ -19,8 +19,9 @@
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.PersonalCompleteResponse
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.MorePetDetailsRequest
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.PetDetailsRequest
+@import play.api.libs.json.Json
 
-@this(layout: Layout, summary: GovukSummaryList, help: HmrcReportTechnicalIssue, govukHeader: GovukHeader)
+@this(layout: Layout, summary: GovukSummaryList, help: HmrcReportTechnicalIssue, govukHeader: GovukHeader, govukDetails: GovukDetails)
 @(petDetailsRequest: PetDetailsRequest, response: PersonalCompleteResponse, moreDetails: MorePetDetailsRequest, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @customHeaderBlock = @{
@@ -56,5 +57,15 @@
             response.sortCodeSupportsDirectDebit.map(v => SummaryListRow(Key(HtmlContent("Direct debit supported")), Value(Text(v.toString)))),
             response.sortCodeSupportsDirectCredit.map(v => SummaryListRow(Key(HtmlContent("Direct credit supported")), Value(Text(v.toString))))
         ).flatten
+    ))
+
+    @govukDetails(Details(
+        summary = Text("Payload received from BAVFE"),
+        content = HtmlContent {
+            import PersonalCompleteResponse._
+            s"""<pre>
+                |${Json.prettyPrint(Json.toJson(response))}
+                |</pre>""".stripMargin
+        }
     ))
 }
