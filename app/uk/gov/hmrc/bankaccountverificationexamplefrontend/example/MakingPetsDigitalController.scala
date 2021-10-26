@@ -145,12 +145,17 @@ class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
     }
   }
 
-  def changeYourAnswers(accountType: Option[String], accountName: Option[String], sortCode: Option[String], accountNumber: Option[String], rollNumber: Option[String]): Action[AnyContent] = Action.async { implicit request =>
+  def changeYourAnswers(accountType: Option[String], accountName: Option[String], companyName: Option[String], sortCode: Option[String], accountNumber: Option[String], rollNumber: Option[String]): Action[AnyContent] = Action.async { implicit request =>
     authorised().retrieve(AuthProviderId.retrieval) { authProviderId =>
+
+        val effectiveAccountName = accountType.flatMap{
+          case "personal" => accountName
+          case "business" => companyName
+        }
 
       connector.init(continueUrl = continueUrl,
         messages = requestMessages,
-        prepopulatedData = Some(InitRequestPrepopulatedData(accountType, accountName, sortCode, accountNumber, rollNumber))).map {
+        prepopulatedData = Some(InitRequestPrepopulatedData(accountType, effectiveAccountName, sortCode, accountNumber, rollNumber))).map {
         case Some(initResponse) => SeeOther(s"${appConfig.bavfWebBaseUrl}${initResponse.startUrl}")
         case None               => InternalServerError
       }
