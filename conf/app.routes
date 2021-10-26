@@ -13,6 +13,6 @@ POST        /moreDetails/:journeyId          uk.gov.hmrc.bankaccountverification
 
 GET         /checkYourDetails/:journeyId     uk.gov.hmrc.bankaccountverificationexamplefrontend.example.MakingPetsDigitalController.getCheckYourAnswers(journeyId)
 GET         /postCheckYourDetails/:journeyId uk.gov.hmrc.bankaccountverificationexamplefrontend.example.MakingPetsDigitalController.postCheckYourAnswers(journeyId)
-GET         /changeDetails                   uk.gov.hmrc.bankaccountverificationexamplefrontend.example.MakingPetsDigitalController.changeYourAnswers(accountType: Option[String], accountName: Option[String], sortCode: Option[String], accountNumber: Option[String], rollNumber: Option[String])
+GET         /changeDetails                   uk.gov.hmrc.bankaccountverificationexamplefrontend.example.MakingPetsDigitalController.changeYourAnswers(accountType: Option[String], accountName: Option[String], companyName: Option[String], sortCode: Option[String], accountNumber: Option[String], rollNumber: Option[String])
 
 GET         /assets/*file                    controllers.Assets.versioned(path = "/public", file: Asset)
