@@ -29,8 +29,8 @@ class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
            messages: Option[InitRequestMessages] = None,
            customisationsUrl: Option[String] = None,
            prepopulatedData: Option[InitRequestPrepopulatedData] = None)(
-            implicit ec: ExecutionContext,
-            hc: HeaderCarrier
+              implicit ec: ExecutionContext,
+              hc: HeaderCarrier
           ): Future[Option[InitResponse]] = {
     import HttpReads.Implicits.readRaw
     import InitRequest.writes
@@ -44,18 +44,18 @@ class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
       timeoutConfig = Some(InitRequestTimeoutConfig("/bank-account-verification-example-frontend", 240, None)),
       prepopulatedData = prepopulatedData)
 
-    val url = s"${appConfig.bavfApiBaseUrl}/api/init"
+    val url = s"${appConfig.bavfApiBaseUrl}/api/v2/init"
     httpClient.POST[InitRequest, HttpResponse](url, request).map {
       case r if r.status == 200 =>
         Some(r.json.as[InitResponse])
-      case _ =>
+      case _                    =>
         None
     }
   }
 
   def complete(journeyId: String)(
-    implicit ec: ExecutionContext,
-    hc: HeaderCarrier
+      implicit ec: ExecutionContext,
+      hc: HeaderCarrier
   ): Future[Option[CompleteResponse]] = {
     import CompleteResponse._
     import HttpReads.Implicits.readRaw
@@ -64,7 +64,7 @@ class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
     httpClient.GET[HttpResponse](url).map {
       case r if r.status == 200 =>
         Some(r.json.as[CompleteResponse])
-      case _ =>
+      case _                    =>
         None
     }
   }
@@ -79,14 +79,19 @@ case class InitRequest(serviceIdentifier: String,
                        timeoutConfig: Option[InitRequestTimeoutConfig] = None)
 
 case class InitRequestMessages(en: JsObject, cy: Option[JsObject] = None)
+
 case class InitRequestAddress(lines: List[String], town: Option[String], postcode: Option[String])
+
 case class InitRequestTimeoutConfig(timeoutUrl: String, timeoutAmount: Int, timeoutKeepAliveUrl: Option[String])
+
 case class InitResponse(journeyId: String, startUrl: String, completeUrl: String, detailsUrl: Option[String])
+
 case class InitRequestPrepopulatedData(accountType: Option[String] = None,
                                        name: Option[String] = None,
                                        sortCode: Option[String] = None,
                                        accountNumber: Option[String] = None,
                                        rollNumber: Option[String] = None)
+
 object InitRequestPrepopulatedData {
   def from(accountType: Option[String] = None,
            name: Option[String] = None,
@@ -95,7 +100,7 @@ object InitRequestPrepopulatedData {
            rollNumber: Option[String] = None): Option[InitRequestPrepopulatedData] = {
     val definedValues = List(accountType, name, sortCode, accountNumber, rollNumber).flatten
 
-    if(definedValues.isEmpty) None
+    if (definedValues.isEmpty) None
     else Some(InitRequestPrepopulatedData(accountType = accountType, name = name, sortCode = sortCode, accountNumber = accountNumber, rollNumber = rollNumber))
   }
 
@@ -106,6 +111,7 @@ object InitRequestPrepopulatedData {
 
 object InitResponse {
   implicit def writes: OWrites[InitResponse] = Json.writes[InitResponse]
+
   implicit def reads: Reads[InitResponse] = Json.reads[InitResponse]
 }
 
@@ -138,6 +144,7 @@ object CompleteResponse {
 case class ExtendedCompleteResponse(completeResponse: CompleteResponse, extraInformation: Option[String])
 
 object ExtendewdCompleteResponse {
+
   import CompleteResponse._
 
   implicit val reads: Reads[ExtendedCompleteResponse] = Json.reads[ExtendedCompleteResponse]
@@ -148,13 +155,10 @@ case class PersonalCompleteResponse(address: Option[CompleteResponseAddress],
                                     accountName: String,
                                     sortCode: String,
                                     accountNumber: String,
-                                    accountNumberWithSortCodeIsValid: ReputationResponseEnum,
+                                    accountNumberIsWellFormatted: ReputationResponseEnum,
                                     rollNumber: Option[String],
                                     accountExists: Option[ReputationResponseEnum],
                                     nameMatches: Option[ReputationResponseEnum],
-                                    addressMatches: Option[ReputationResponseEnum],
-                                    nonConsented: Option[ReputationResponseEnum],
-                                    subjectHasDeceased: Option[ReputationResponseEnum],
                                     nonStandardAccountDetailsRequiredForBacs: Option[ReputationResponseEnum],
                                     sortCodeBankName: Option[String],
                                     sortCodeSupportsDirectDebit: Option[ReputationResponseEnum],
@@ -172,11 +176,9 @@ case class BusinessCompleteResponse(address: Option[CompleteResponseAddress],
                                     sortCode: String,
                                     accountNumber: String,
                                     rollNumber: Option[String],
-                                    accountNumberWithSortCodeIsValid: ReputationResponseEnum,
+                                    accountNumberIsWellFormatted: ReputationResponseEnum,
                                     accountExists: Option[ReputationResponseEnum],
-                                    companyNameMatches: Option[ReputationResponseEnum],
-                                    companyPostCodeMatches: Option[ReputationResponseEnum],
-                                    companyRegistrationNumberMatches: Option[ReputationResponseEnum],
+                                    nameMatches: Option[ReputationResponseEnum],
                                     nonStandardAccountDetailsRequiredForBacs: Option[ReputationResponseEnum],
                                     sortCodeBankName: Option[String],
                                     sortCodeSupportsDirectDebit: Option[ReputationResponseEnum],
@@ -198,12 +200,12 @@ object ReputationResponseEnum extends Enumerable.Implicits {
   case object No extends WithName("no") with ReputationResponseEnum
 
   case object Indeterminate
-    extends WithName("indeterminate")
-      with ReputationResponseEnum
+      extends WithName("indeterminate")
+          with ReputationResponseEnum
 
   case object Inapplicable
-    extends WithName("inapplicable")
-      with ReputationResponseEnum
+      extends WithName("inapplicable")
+          with ReputationResponseEnum
 
   case object Error extends WithName("error") with ReputationResponseEnum
 
