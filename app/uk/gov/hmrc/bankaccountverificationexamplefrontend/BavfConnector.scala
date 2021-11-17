@@ -60,7 +60,7 @@ class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
     import CompleteResponse._
     import HttpReads.Implicits.readRaw
 
-    val url = s"${appConfig.bavfApiBaseUrl}/api/complete/$journeyId"
+    val url = s"${appConfig.bavfApiBaseUrl}/api/v2/complete/$journeyId"
     httpClient.GET[HttpResponse](url).map {
       case r if r.status == 200 =>
         Some(r.json.as[CompleteResponse])
