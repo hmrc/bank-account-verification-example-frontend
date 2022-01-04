@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -151,18 +151,7 @@ object ExtendewdCompleteResponse {
   implicit val writes: Writes[ExtendedCompleteResponse] = Json.writes[ExtendedCompleteResponse]
 }
 
-case class PersonalCompleteResponse(address: Option[CompleteResponseAddress],
-                                    accountName: String,
-                                    sortCode: String,
-                                    accountNumber: String,
-                                    accountNumberIsWellFormatted: ReputationResponseEnum,
-                                    rollNumber: Option[String],
-                                    accountExists: Option[ReputationResponseEnum],
-                                    nameMatches: Option[ReputationResponseEnum],
-                                    nonStandardAccountDetailsRequiredForBacs: Option[ReputationResponseEnum],
-                                    sortCodeBankName: Option[String],
-                                    sortCodeSupportsDirectDebit: Option[ReputationResponseEnum],
-                                    sortCodeSupportsDirectCredit: Option[ReputationResponseEnum])
+case class PersonalCompleteResponse(address: Option[CompleteResponseAddress], accountName: String, sortCode: String, accountNumber: String, accountNumberIsWellFormatted: ReputationResponseEnum, rollNumber: Option[String], accountExists: Option[ReputationResponseEnum], nameMatches: Option[ReputationResponseEnum], nonStandardAccountDetailsRequiredForBacs: Option[ReputationResponseEnum], sortCodeBankName: Option[String], sortCodeSupportsDirectDebit: Option[ReputationResponseEnum], sortCodeSupportsDirectCredit: Option[ReputationResponseEnum], iban: Option[String])
 
 object PersonalCompleteResponse {
   implicit val addressReads: Reads[CompleteResponseAddress] = Json.reads[CompleteResponseAddress]
@@ -171,18 +160,7 @@ object PersonalCompleteResponse {
   implicit val writes: Writes[PersonalCompleteResponse] = Json.writes[PersonalCompleteResponse]
 }
 
-case class BusinessCompleteResponse(address: Option[CompleteResponseAddress],
-                                    companyName: String,
-                                    sortCode: String,
-                                    accountNumber: String,
-                                    rollNumber: Option[String],
-                                    accountNumberIsWellFormatted: ReputationResponseEnum,
-                                    accountExists: Option[ReputationResponseEnum],
-                                    nameMatches: Option[ReputationResponseEnum],
-                                    nonStandardAccountDetailsRequiredForBacs: Option[ReputationResponseEnum],
-                                    sortCodeBankName: Option[String],
-                                    sortCodeSupportsDirectDebit: Option[ReputationResponseEnum],
-                                    sortCodeSupportsDirectCredit: Option[ReputationResponseEnum])
+case class BusinessCompleteResponse(address: Option[CompleteResponseAddress], companyName: String, sortCode: String, accountNumber: String, rollNumber: Option[String], accountNumberIsWellFormatted: ReputationResponseEnum, accountExists: Option[ReputationResponseEnum], nameMatches: Option[ReputationResponseEnum], nonStandardAccountDetailsRequiredForBacs: Option[ReputationResponseEnum], sortCodeBankName: Option[String], sortCodeSupportsDirectDebit: Option[ReputationResponseEnum], sortCodeSupportsDirectCredit: Option[ReputationResponseEnum], iban: Option[String])
 
 object BusinessCompleteResponse {
   implicit val addressReads: Reads[CompleteResponseAddress] = Json.reads[CompleteResponseAddress]
