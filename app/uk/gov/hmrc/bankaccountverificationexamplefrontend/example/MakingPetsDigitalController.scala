@@ -240,6 +240,8 @@ class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
       InitRequestMessages(
         en = Json.obj(
           "service.name" -> english("service.name"),
+          "label.accountDetails.heading.business" -> "Business bank or building society account details",
+          "label.accountDetails.heading.personal" -> "Personal bank or building society account details",
           "footer.accessibility.url" -> s"${appConfig.exampleExternalUrl}${english("footer.accessibility.url")}",
           "phaseBanner.tag" -> "BETA"
         ),

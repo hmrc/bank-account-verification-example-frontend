@@ -50,7 +50,8 @@
             SummaryListRow(Key(HtmlContent("Validation result")), Value(Text(response.accountNumberIsWellFormatted.toString)))
         ) ++ Seq(
             response.accountExists.map(v => SummaryListRow(Key(HtmlContent("Account exists")), Value(Text(v.toString)))),
-            response.nameMatches.map(v => SummaryListRow(Key(HtmlContent("Account name matched")), Value(Text(v.toString)))),
+            response.nameMatches.map(v => SummaryListRow(Key(HtmlContent("Account name matches")), Value(Text(v.toString)))),
+            response.matchedAccountName.map(v => SummaryListRow(Key(HtmlContent("Partially matched name")), Value(Text(v.toString)))),
             response.sortCodeBankName.map(v => SummaryListRow(Key(HtmlContent("Bank name")), Value(Text(v)))),
             response.sortCodeSupportsDirectDebit.map(v => SummaryListRow(Key(HtmlContent("Direct debit supported")), Value(Text(v.toString)))),
             response.sortCodeSupportsDirectCredit.map(v => SummaryListRow(Key(HtmlContent("Direct credit supported")), Value(Text(v.toString))))
