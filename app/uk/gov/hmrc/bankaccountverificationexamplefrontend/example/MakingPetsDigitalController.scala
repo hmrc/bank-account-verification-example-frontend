@@ -28,8 +28,7 @@ import uk.gov.hmrc.bankaccountverificationexamplefrontend._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
@@ -41,7 +40,7 @@ class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
                                             checkYourBusinessAnswersPage: CheckYourBusinessAnswersPage,
                                             checkYourPersonalAnswersPage: CheckYourPersonalAnswersPage,
                                             personalDonePage: PersonalDonePage,
-                                            businessDonePage: BusinessDonePage)
+                                            businessDonePage: BusinessDonePage)(implicit ec: ExecutionContext)
     extends FrontendController(mcc) with AuthorisedFunctions {
 
   implicit val config: AppConfig = appConfig

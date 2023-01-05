@@ -1,6 +1,5 @@
 # microservice specific routes
 
-->          /govuk-frontend                  govuk.Routes
 ->          /hmrc-frontend                   hmrcfrontend.Routes
 GET         /                                uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers.DocumentationController.display
 GET         /language/:lang                  uk.gov.hmrc.bankaccountverificationexamplefrontend.example.ExampleLanguageController.switchToLanguage(lang: String)
