@@ -57,7 +57,7 @@ class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
 
   val continueUrl = s"${appConfig.exampleExternalUrl}/bank-account-verification-example-frontend/moreDetails"
   val changeAccountTypeUrl = s"${appConfig.exampleExternalUrl}/bank-account-verification-example-frontend/changeDetails"
-  val doneUrl = s"${appConfig.exampleExternalUrl}/bank-account-verification-example-frontend/postCheckYourDetails"
+  private val doneUrl = s"${appConfig.exampleExternalUrl}/bank-account-verification-example-frontend/postCheckYourDetails"
   val changePetDetailsUrl = s"${appConfig.exampleExternalUrl}/bank-account-verification-example-frontend/start"
 
   val postDetails: Action[AnyContent] = Action.async { implicit request =>
@@ -177,7 +177,7 @@ class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
 
   private def addToSession(petDetailsRequest: PetDetailsRequest)(implicit request: Request[AnyContent]): Session = {
     import PetDetailsRequest.formats._
-    (request.session + ("mpdDetails" -> Json.toJson(petDetailsRequest).toString))
+    request.session + ("mpdDetails" -> Json.toJson(petDetailsRequest).toString)
   }
 
   private def addToSession(completeResponse: CompleteResponse, moreDetails: MorePetDetailsRequest)(implicit request: Request[AnyContent]): Session = {
@@ -201,7 +201,7 @@ class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
 
   private def retrieveFromAndClearSession()(implicit request: Request[AnyContent]): ((Option[PetDetailsRequest], Option[String], Option[PersonalCompleteResponse], Option[BusinessCompleteResponse], Option[MorePetDetailsRequest]), Session) = {
     val result = retrieveFromSession()
-    (result, (request.session -- Seq("mpdDetails", "bavfeResponseType", "bavfeResponse", "bavfefeMoreInformation")))
+    (result, request.session -- Seq("mpdDetails", "bavfeResponseType", "bavfeResponse", "bavfefeMoreInformation"))
   }
 
   private def retrieveFromSession()(implicit request: Request[AnyContent]): (Option[PetDetailsRequest], Option[String], Option[PersonalCompleteResponse], Option[BusinessCompleteResponse], Option[MorePetDetailsRequest]) = {

@@ -16,31 +16,28 @@
 
 package uk.gov.hmrc.bankaccountverificationexamplefrontend.example
 
-import play.api.data.{Form, FormError, Mapping}
-import play.api.data.Forms.{mapping, of}
+import play.api.data.Forms._
 import play.api.data.format.Formatter
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
-import play.api.libs.json.Json
+import play.api.data.{Form, FormError, Mapping}
+import play.api.libs.json.{Json, Reads, Writes}
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.{Enumerable, WithName}
-import play.api.data.Forms._
-
-import scala.util.Try
 
 case class PrepopulatedAccountInformation(accountType: Option[String], accountName: Option[String], sortCode: Option[String], accountNumber: Option[String], rollNumber: Option[String])
 
 object PrepopulatedAccountInformation {
   object formats {
-    implicit val reads  = Json.reads[PrepopulatedAccountInformation]
-    implicit val writes = Json.writes[PrepopulatedAccountInformation]
+    implicit val reads: Reads[PrepopulatedAccountInformation] = Json.reads[PrepopulatedAccountInformation]
+    implicit val writes: Writes[PrepopulatedAccountInformation] = Json.writes[PrepopulatedAccountInformation]
   }
 }
 
 sealed trait PetTypeEnum
 object PetTypeEnum extends Enumerable.Implicits {
-  case object Cat extends WithName("cat") with PetTypeEnum
-  case object Dog extends WithName("dog") with PetTypeEnum
-  case object Bunny extends WithName("bunny") with PetTypeEnum
-  case object Other extends WithName("other") with PetTypeEnum
+  private case object Cat extends WithName("cat") with PetTypeEnum
+  private case object Dog extends WithName("dog") with PetTypeEnum
+  private case object Bunny extends WithName("bunny") with PetTypeEnum
+  private case object Other extends WithName("other") with PetTypeEnum
   case object Error extends WithName("") with PetTypeEnum
 
   val values: Seq[PetTypeEnum] = Seq(Cat, Dog, Bunny, Other)
@@ -55,8 +52,8 @@ object PetDetailsRequest {
   import PetTypeEnum._
 
   object formats {
-    implicit val accountTypeReads  = Json.reads[PetDetailsRequest]
-    implicit val accountTypeWrites = Json.writes[PetDetailsRequest]
+    implicit val accountTypeReads: Reads[PetDetailsRequest] = Json.reads[PetDetailsRequest]
+    implicit val accountTypeWrites: Writes[PetDetailsRequest] = Json.writes[PetDetailsRequest]
   }
 
   val prepopulatedAccountInformationMapping: Mapping[PrepopulatedAccountInformation] = mapping(
@@ -77,7 +74,7 @@ object PetDetailsRequest {
     )
 
   // Need to do this as if the radio buttons are not selected then we don't get the parameter at all.
-  def petTypeMapping: Mapping[PetTypeEnum] = {
+  private def petTypeMapping: Mapping[PetTypeEnum] = {
     def permissiveStringFormatter: Formatter[PetTypeEnum] =
       new Formatter[PetTypeEnum] {
         def bind(key: String, data: Map[String, String]): Either[Seq[FormError], PetTypeEnum] =
@@ -85,20 +82,20 @@ object PetDetailsRequest {
             val kv = data.getOrElse(key, "")
             PetTypeEnum.enumerable.withName(kv).getOrElse(Error)
           }
-        def unbind(key: String, value: PetTypeEnum) = Map(key -> value.toString)
+        def unbind(key: String, value: PetTypeEnum): Map[String, String] = Map(key -> value.toString)
       }
 
     of[PetTypeEnum](permissiveStringFormatter).verifying(petTypeConstraint())
   }
 
-  def petNameConstraint(): Constraint[String] =
+  private def petNameConstraint(): Constraint[String] =
     Constraint[String](Some("constraints.petName"), Seq()) { input =>
-      if (input.trim.length == 0) Invalid(ValidationError("error.petName.required"))
+      if (input.trim.isEmpty) Invalid(ValidationError("error.petName.required"))
       else Valid
     }
 
 
-  def petTypeConstraint(): Constraint[PetTypeEnum] =
+  private def petTypeConstraint(): Constraint[PetTypeEnum] =
     Constraint[PetTypeEnum](Some("constraints.petType"), Seq()) { input =>
       if (input == Error) Invalid(ValidationError("error.petType.required"))
       else if (PetTypeEnum.values.contains(input)) Valid
@@ -110,8 +107,8 @@ case class MorePetDetailsRequest(moreDetails: Option[String])
 
 object MorePetDetailsRequest {
   object formats {
-    implicit val morePetDetailsRequestReads  = Json.reads[MorePetDetailsRequest]
-    implicit val morePetDetailsRequestWrites = Json.writes[MorePetDetailsRequest]
+    implicit val morePetDetailsRequestReads: Reads[MorePetDetailsRequest] = Json.reads[MorePetDetailsRequest]
+    implicit val morePetDetailsRequestWrites: Writes[MorePetDetailsRequest] = Json.writes[MorePetDetailsRequest]
   }
 
   val form: Form[MorePetDetailsRequest] =
