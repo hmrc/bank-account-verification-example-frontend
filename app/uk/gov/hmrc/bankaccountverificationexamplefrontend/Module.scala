@@ -34,12 +34,15 @@ package uk.gov.hmrc.bankaccountverificationexamplefrontend
 
 import com.google.inject.AbstractModule
 import play.api.libs.concurrent.PekkoGuiceSupport
+import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
+import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 
 class Module extends AbstractModule with PekkoGuiceSupport {
   override def configure(): Unit = {
     super.configure()
     bind(classOf[AppConfig])
     bind(classOf[BavfConnector])
+    bind(classOf[AuthConnector]).to(classOf[DefaultAuthConnector])
   }
 }
