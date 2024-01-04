@@ -25,21 +25,15 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
   val footerLinkItems: Seq[String] = config.getOptional[Seq[String]]("footerLinkItems").getOrElse(Seq())
 
-  val bavfApiBaseUrl = servicesConfig.baseUrl("bank-account-verification-api")
-  val bavfWebBaseUrl = servicesConfig.baseUrl("bank-account-verification-web")
+  val bavfApiBaseUrl: String = servicesConfig.baseUrl("bank-account-verification-api")
+  val bavfWebBaseUrl: String = servicesConfig.baseUrl("bank-account-verification-web")
 
-  val exampleExternalUrl = servicesConfig.baseUrl("bank-account-verification-example-frontend.external")
-  val exampleInternalUrl = servicesConfig.baseUrl("bank-account-verification-example-frontend.internal")
+  val exampleExternalUrl: String = servicesConfig.baseUrl("bank-account-verification-example-frontend.external")
+  val exampleInternalUrl: String = servicesConfig.baseUrl("bank-account-verification-example-frontend.internal")
 
-  val authLoginStubPath = servicesConfig.getConfString("auth-login-stub.path","")
-  val authLoginStubUrl = servicesConfig.baseUrl("auth-login-stub") +
+  private val authLoginStubPath: String = servicesConfig.getConfString("auth-login-stub.path","")
+  val authLoginStubUrl: String = servicesConfig.baseUrl("auth-login-stub") +
     authLoginStubPath + "?continue=" +
     exampleExternalUrl + "/bank-account-verification-example-frontend" +
     uk.gov.hmrc.bankaccountverificationexamplefrontend.example.routes.MakingPetsDigitalController.getDetails.url
-
-  def langToLanguage(langCode: String): Language = langCode match {
-    case "en" ⇒ En
-    case "cy" ⇒ Cy
-    case _ => En
-  }
 }
