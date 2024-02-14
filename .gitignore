@@ -35,3 +35,6 @@ tmp
 bin
 .null/
 null/
+/build.log
+/project/metals.sbt
+**/graal_diagnostics_*.zip
