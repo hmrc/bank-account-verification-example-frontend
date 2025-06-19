@@ -14,10 +14,8 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.FooterLinks
-
 @this(phaseBanner: GovukPhaseBanner, banner: HmrcBanner, govukBackLink: GovukBackLink, languageSelect: HmrcLanguageSelect)
-@()(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@()(implicit request: Request[_], messages: Messages)
 
  @phaseBanner(PhaseBanner(
   tag = Some(Tag(content = HtmlContent("Beta"))),
@@ -27,8 +25,8 @@
  @govukBackLink(BackLink(href="javascript:history.back()", content = HtmlContent(messages("label.back"))))
 
  @languageSelect(LanguageSelect(messages.lang.code match {
-    case "en" ⇒ En
-    case "cy" ⇒ Cy
+    case "en" => En
+    case "cy" => Cy
   }, En -> s"${uk.gov.hmrc.bankaccountverificationexamplefrontend.example.routes.ExampleLanguageController.switchToLanguage("english")}",
      Cy -> s"${uk.gov.hmrc.bankaccountverificationexamplefrontend.example.routes.ExampleLanguageController.switchToLanguage("cymraeg")}"
   ))

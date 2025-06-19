@@ -15,14 +15,15 @@
  *@
 
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
+@import uk.gov.hmrc.bankaccountverificationexamplefrontend.example
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.PetDetailsRequest
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html.Layout
-
-@import uk.gov.hmrc.bankaccountverificationexamplefrontend.example
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.FormGroup
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
 
 @this(layout: Layout, form: FormWithCSRF, input: GovukInput, errorSummary: GovukErrorSummary, govukButton: GovukButton,
         radios: GovukRadios, textArea: GovukTextarea, help: HmrcReportTechnicalIssue, govukHeader: GovukHeader)
+
 
 @(detailsForm: Form[PetDetailsRequest], beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
@@ -53,7 +54,7 @@
 
     @if(detailsForm.hasErrors) {
         @errorSummary(ErrorSummary(title = HtmlContent(messages("error.summaryText")),
-            errorList = detailsForm.errors.map { error ⇒
+            errorList = detailsForm.errors.map { error =>
                 ErrorLink(href = Some(s"#${error.key}"),
                     content = HtmlContent(messages(error.message)))
             }))
@@ -62,9 +63,9 @@
     @form(example.routes.MakingPetsDigitalController.postDetails) {
         @input(Input(value = detailsForm("petName").value,
             label = Label(content = HtmlContent(messages("label.petName"))),
-            formGroupClasses = "form-field-group",
+            formGroup = FormGroup(Some("form-field-group")),
             name = detailsForm("petName").name, id = detailsForm("petName").name,
-            errorMessage = detailsForm("petName").error.map(fe ⇒ ErrorMessage(content = HtmlContent(messages(fe.message))))))
+            errorMessage = detailsForm("petName").error.map(fe => ErrorMessage(content = HtmlContent(messages(fe.message))))))
 
         @radios(Radios(
             idPrefix = Some("pet-type"),
@@ -99,16 +100,16 @@
         @input(Input(value = detailsForm("age").value,
             label = Label(content = HtmlContent(messages("label.petAge"))),
             classes = "govuk-input--width-5",
-            formGroupClasses = "form-field-group",
+            formGroup = FormGroup(Some("form-field-group")),
             name = detailsForm("age").name, id = detailsForm("age").name,
-            errorMessage = detailsForm("age").error.map(fe ⇒ ErrorMessage(content = HtmlContent(messages(fe.message))))))
+            errorMessage = detailsForm("age").error.map(fe => ErrorMessage(content = HtmlContent(messages(fe.message))))))
 
         @textArea(Textarea(
             value = detailsForm("description").value,
             label = Label(content = HtmlContent(messages("label.petDescription"))),
-            formGroupClasses = "form-field-group",
+            formGroup = FormGroup(Some("form-field-group")),
             name = detailsForm("description").name, id = detailsForm("description").name,
-            errorMessage = detailsForm("description").error.map(fe ⇒ ErrorMessage(content = HtmlContent(messages(fe.message))))))
+            errorMessage = detailsForm("description").error.map(fe => ErrorMessage(content = HtmlContent(messages(fe.message))))))
 
         @govukButton(Button(content = HtmlContent(messages("label.continue")), name = Some("continue"), inputType = Some("submit")))
     }

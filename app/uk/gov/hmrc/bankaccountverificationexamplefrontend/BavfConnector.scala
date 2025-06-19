@@ -18,12 +18,13 @@ package uk.gov.hmrc.bankaccountverificationexamplefrontend
 
 import play.api.libs.json._
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
+class BavfConnector @Inject()(httpClient: HttpClientV2, appConfig: AppConfig) {
 
   def init(continueUrl: String,
            messages: Option[InitRequestMessages] = None,
@@ -48,7 +49,12 @@ class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
       maxCallCountRedirectUrl = Some("/too-many-attempts"))
 
     val url = s"${appConfig.bavfApiBaseUrl}/api/v3/init"
-    httpClient.POST[InitRequest, HttpResponse](url, request).map {
+
+    httpClient
+      .post(url"$url")
+      .withBody(Json.toJson(request))
+      .execute
+      .map {
       case r if r.status == 200 =>
         Some(r.json.as[InitResponse])
       case _                    =>
@@ -64,7 +70,11 @@ class BavfConnector @Inject()(httpClient: HttpClient, appConfig: AppConfig) {
     import HttpReads.Implicits.readRaw
 
     val url = s"${appConfig.bavfApiBaseUrl}/api/v3/complete/$journeyId"
-    httpClient.GET[HttpResponse](url).map {
+
+    httpClient
+      .get(url"$url")
+      .execute
+      .map {
       case r if r.status == 200 =>
         Some(r.json.as[CompleteResponse])
       case _                    =>
@@ -150,8 +160,6 @@ object CompleteResponse {
 case class ExtendedCompleteResponse(completeResponse: CompleteResponse, extraInformation: Option[String])
 
 object ExtendewdCompleteResponse {
-
-  import CompleteResponse._
 
   implicit val reads: Reads[ExtendedCompleteResponse] = Json.reads[ExtendedCompleteResponse]
   implicit val writes: Writes[ExtendedCompleteResponse] = Json.writes[ExtendedCompleteResponse]

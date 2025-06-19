@@ -15,7 +15,8 @@
  *@
 
 @this(hmrcInternalHeader: HmrcInternalHeader)
-@()(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@()(implicit request: RequestHeader, messages: Messages)
 
 @hmrcInternalHeader(InternalHeader(
     homepageUrl = "https://www.gov.uk/",

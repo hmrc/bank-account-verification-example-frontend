@@ -21,10 +21,10 @@ import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
+import uk.gov.hmrc.bankaccountverificationexamplefrontend._
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.html.PetDetails
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html._
-import uk.gov.hmrc.bankaccountverificationexamplefrontend._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -119,8 +119,6 @@ class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
             case Some(r) if r.accountType == "business" =>
               addToSession(r, moreDetails)
           }.map { s =>
-              import MorePetDetailsRequest.formats._
-              val moreDetailsJsonText = Json.toJson[MorePetDetailsRequest](form.get).toString()
             SeeOther(routes.MakingPetsDigitalController.getCheckYourAnswers(journeyId).url)
                 .withSession(s)
           }

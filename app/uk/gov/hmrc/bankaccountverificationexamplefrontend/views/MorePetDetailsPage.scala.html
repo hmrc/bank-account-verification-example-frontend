@@ -15,8 +15,9 @@
  *@
 
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.MorePetDetailsRequest
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.FormGroup
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
 
 @this(layout: Layout, form: FormWithCSRF, textArea: GovukTextarea, govukButton: GovukButton, summary: GovukSummaryList, help: HmrcReportTechnicalIssue, govukHeader: GovukHeader)
 @(journeyId: String, detailsForm: Form[MorePetDetailsRequest], beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
@@ -38,7 +39,7 @@
         @textArea(Textarea(
             value = detailsForm("moreDetails").value,
             label = Label(content = HtmlContent(messages("label.moreDetails"))),
-            formGroupClasses = "form-field-group",
+            formGroup = FormGroup(Some("form-field-group")),
             name = "moreDetails",
             id = "moreDetails"))
 

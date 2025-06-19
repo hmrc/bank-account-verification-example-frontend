@@ -15,10 +15,9 @@
  *@
 
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.FooterLinks
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.footer.Meta
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.footer.{Footer => GFooter}
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.footer.{Meta, Footer => GFooter}
 
 @this(govukFooter: GovukFooter)
-@()(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@()(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @govukFooter(new GFooter(meta = Some(Meta(items = Some(FooterLinks())))))

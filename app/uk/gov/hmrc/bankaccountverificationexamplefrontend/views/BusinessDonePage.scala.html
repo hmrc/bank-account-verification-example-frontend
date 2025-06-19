@@ -14,15 +14,14 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
-@import uk.gov.hmrc.bankaccountverificationexamplefrontend.BusinessCompleteResponse
-@import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.MorePetDetailsRequest
-@import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.PetDetailsRequest
 @import play.api.libs.json.Json
+@import uk.gov.hmrc.bankaccountverificationexamplefrontend.BusinessCompleteResponse
+@import BusinessCompleteResponse._
+@import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.{MorePetDetailsRequest, PetDetailsRequest}
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
 
 @this(layout: Layout, summary: GovukSummaryList, help: HmrcReportTechnicalIssue, govukHeader: GovukHeader, govukDetails: GovukDetails)
-@(petDetailsRequest: PetDetailsRequest, response: BusinessCompleteResponse, moreDetails: MorePetDetailsRequest, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(petDetailsRequest: PetDetailsRequest, response: BusinessCompleteResponse, moreDetails: MorePetDetailsRequest, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 
     @customHeaderBlock = @{
         govukHeader(Header(
@@ -62,7 +61,6 @@
         @govukDetails(Details(
             summary = Text("Payload received from BAVFE"),
             content = HtmlContent {
-                import BusinessCompleteResponse._
                 s"""<pre>
                 |${Json.prettyPrint(Json.toJson(response))}
                 |</pre>""".stripMargin
