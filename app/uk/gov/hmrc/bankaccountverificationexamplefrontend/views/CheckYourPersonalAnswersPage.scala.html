@@ -15,11 +15,10 @@
  *@
 
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
-@import uk.gov.hmrc.bankaccountverificationexamplefrontend.{PersonalCompleteResponse, example}
-@import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.MorePetDetailsRequest
+@import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.{MorePetDetailsRequest, PetDetailsRequest}
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.TemplateHelper._
+@import uk.gov.hmrc.bankaccountverificationexamplefrontend.{PersonalCompleteResponse, example}
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
-@import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.PetDetailsRequest
 
 @this(layout: Layout, summary: GovukSummaryList, button: GovukButton, help: HmrcReportTechnicalIssue, govukHeader: GovukHeader)
 @(journeyId: String, petDetailsRequest: PetDetailsRequest, response: PersonalCompleteResponse, moreDetails: MorePetDetailsRequest, changePetDetailsUrl: String, changeAccountTypeUrl: String, continueUrl: String, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)

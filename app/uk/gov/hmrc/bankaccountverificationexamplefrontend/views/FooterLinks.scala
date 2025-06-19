@@ -17,8 +17,8 @@
 package uk.gov.hmrc.bankaccountverificationexamplefrontend.views
 
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.footer.FooterItem
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
+import uk.gov.hmrc.govukfrontend.views.viewmodels.footer.FooterItem
 
 object FooterLinks {
   def apply()(implicit messages: Messages, appConfig: AppConfig): Seq[FooterItem] = appConfig.footerLinkItems.flatMap { item =>

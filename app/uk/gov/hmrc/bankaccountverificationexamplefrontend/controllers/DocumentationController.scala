@@ -16,12 +16,12 @@
 
 package uk.gov.hmrc.bankaccountverificationexamplefrontend.controllers
 
-import javax.inject.{Inject, Singleton}
 import play.api.mvc._
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
 import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.html.LandingPage
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton

@@ -16,10 +16,10 @@
 
 package uk.gov.hmrc.bankaccountverificationexamplefrontend.config
 
-import javax.inject.{Inject, Singleton}
 import play.api.Configuration
-import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.{Cy, En, Language}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {

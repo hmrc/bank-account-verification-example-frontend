@@ -24,6 +24,7 @@
 @this(layout: Layout, form: FormWithCSRF, input: GovukInput, errorSummary: GovukErrorSummary, govukButton: GovukButton,
         radios: GovukRadios, textArea: GovukTextarea, help: HmrcReportTechnicalIssue, govukHeader: GovukHeader)
 
+
 @(detailsForm: Form[PetDetailsRequest], beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @customHeaderBlock = @{
