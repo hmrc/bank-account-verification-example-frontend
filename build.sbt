@@ -1,6 +1,6 @@
 import uk.gov.hmrc.DefaultBuildSettings
 
-ThisBuild / scalaVersion := "2.13.12"
+ThisBuild / scalaVersion := "2.13.16"
 ThisBuild / majorVersion := 0
 
 val appName = "bank-account-verification-example-frontend"
@@ -17,7 +17,7 @@ lazy val microservice = Project(appName, file("."))
     scalacOptions += "-Wconf:cat=unused-imports&src=html/.*:s",
     scalacOptions += "-Wconf:cat=unused-imports&src=routes/.*:s",
   )
-  .settings(resolvers += Resolver.jcenterRepo)
+  .settings(PlayKeys.playDefaultPort := 9929)
 
 lazy val it = project.in(file("it"))
   .enablePlugins(play.sbt.PlayScala)

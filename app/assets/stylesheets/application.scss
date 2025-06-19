@@ -1,9 +1,0 @@
-$govuk-assets-path: "/bank-account-verification-example-frontend/assets/lib/govuk-frontend/govuk/assets/";
-$hmrc-assets-path: "/bank-account-verification-example-frontend/assets/lib/hmrc-frontend/hmrc/";
-
-@import "lib/govuk-frontend/govuk/all";
-@import "lib/hmrc-frontend/hmrc/all";
-
-.hmrc-language-select {
-  float: right;
-}
