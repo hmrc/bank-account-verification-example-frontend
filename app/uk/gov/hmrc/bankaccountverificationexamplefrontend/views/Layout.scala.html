@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
 @import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcStandardPage
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage.{Banners, HmrcStandardPageParams}
@@ -37,7 +36,7 @@
         headBlock: Option[Html] = None,
         scriptsBlock: Option[Html] = None,
         customHeaderBlock: Option[Html] = None
-)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
 
 @hmrcStandardPage(
     HmrcStandardPageParams(

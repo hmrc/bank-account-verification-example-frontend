@@ -119,8 +119,6 @@ class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
             case Some(r) if r.accountType == "business" =>
               addToSession(r, moreDetails)
           }.map { s =>
-              import MorePetDetailsRequest.formats._
-              val moreDetailsJsonText = Json.toJson[MorePetDetailsRequest](form.get).toString()
             SeeOther(routes.MakingPetsDigitalController.getCheckYourAnswers(journeyId).url)
                 .withSession(s)
           }
