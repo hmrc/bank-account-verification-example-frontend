@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.footer.{Meta, Footer => GFooter}
 
 @this(govukFooter: GovukFooter)
-@()(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
+
+@()(implicit messages: Messages, appConfig: AppConfig)
 
 @govukFooter(new GFooter(meta = Some(Meta(items = Some(FooterLinks())))))

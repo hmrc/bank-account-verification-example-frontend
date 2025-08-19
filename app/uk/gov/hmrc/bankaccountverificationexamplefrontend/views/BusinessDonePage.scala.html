@@ -21,6 +21,7 @@
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
 
 @this(layout: Layout, summary: GovukSummaryList, help: HmrcReportTechnicalIssue, govukHeader: GovukHeader, govukDetails: GovukDetails)
+
 @(petDetailsRequest: PetDetailsRequest, response: BusinessCompleteResponse, moreDetails: MorePetDetailsRequest, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 
     @customHeaderBlock = @{
@@ -49,7 +50,7 @@
                 SummaryListRow(Key(HtmlContent("Address")), Value(HtmlContent(response.address.map(_.toString).getOrElse("")))),
 
                 SummaryListRow(Key(HtmlContent("Validation result")), Value(Text(response.accountNumberIsWellFormatted.toString))),
-                SummaryListRow(Key(HtmlContent("Company name matches")), Value(Text(response.nameMatches.getOrElse("").toString))),
+                SummaryListRow(Key(HtmlContent("Company name matches")), Value(Text(response.nameMatches.map(_.toString).getOrElse("")))),
             ) ++ Seq(
                 response.accountExists.map(v => SummaryListRow(Key(HtmlContent("Account exists")), Value(Text(v.toString)))),
                 response.sortCodeBankName.map(v => SummaryListRow(Key(HtmlContent("Bank name")), Value(Text(v)))),

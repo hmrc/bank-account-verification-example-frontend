@@ -15,7 +15,8 @@
  *@
 
 @this(phaseBanner: GovukPhaseBanner, banner: HmrcBanner, govukBackLink: GovukBackLink, languageSelect: HmrcLanguageSelect)
-@()(implicit request: Request[_], messages: Messages)
+
+@()(implicit messages: Messages)
 
  @phaseBanner(PhaseBanner(
   tag = Some(Tag(content = HtmlContent("Beta"))),

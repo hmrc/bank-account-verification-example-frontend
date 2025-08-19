@@ -17,12 +17,12 @@
 @import play.api.libs.json.Json
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.PersonalCompleteResponse
 @import PersonalCompleteResponse._
-@import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.{MorePetDetailsRequest, PetDetailsRequest}
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
 
 @this(layout: Layout, summary: GovukSummaryList, help: HmrcReportTechnicalIssue, govukHeader: GovukHeader, govukDetails: GovukDetails)
-@(petDetailsRequest: PetDetailsRequest, response: PersonalCompleteResponse, moreDetails: MorePetDetailsRequest, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@(petDetailsRequest: PetDetailsRequest, response: PersonalCompleteResponse, moreDetails: MorePetDetailsRequest, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 
 @customHeaderBlock = @{
     govukHeader(Header(
