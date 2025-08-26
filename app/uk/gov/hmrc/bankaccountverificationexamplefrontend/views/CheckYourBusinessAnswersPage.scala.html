@@ -14,14 +14,14 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.example.{MorePetDetailsRequest, PetDetailsRequest}
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.views.TemplateHelper._
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.{BusinessCompleteResponse, example}
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.header.Header
 
 @this(layout: Layout, summary: GovukSummaryList, button: GovukButton, help: HmrcReportTechnicalIssue, govukHeader: GovukHeader)
-@(journeyId: String, petDetailsRequest: PetDetailsRequest, response: BusinessCompleteResponse, moreDetails: MorePetDetailsRequest, changePetDetailsUrl: String, changeAccountTypeUrl: String, continueUrl: String, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@(journeyId: String, petDetailsRequest: PetDetailsRequest, response: BusinessCompleteResponse, moreDetails: MorePetDetailsRequest, changePetDetailsUrl: String, changeAccountTypeUrl: String, continueUrl: String, beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 
 @customHeaderBlock = @{
     govukHeader(Header(

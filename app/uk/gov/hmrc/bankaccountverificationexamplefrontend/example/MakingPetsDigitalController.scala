@@ -220,7 +220,7 @@ class MakingPetsDigitalController @Inject()(appConfig: AppConfig,
       case (Some("business"), Some(rjt)) =>
         import BusinessCompleteResponse._
         (None, Json.fromJson[BusinessCompleteResponse](Json.parse(rjt)).asOpt)
-      case (None, None) => (None, None)
+      case (_, _) => (None, None)
     }
     val moreInformation = {
       import MorePetDetailsRequest.formats._

@@ -17,7 +17,8 @@
 @import uk.gov.hmrc.bankaccountverificationexamplefrontend.config.AppConfig
 
 @this(layout: Layout, form: FormWithCSRF, govukButton: GovukButton, help: HmrcReportTechnicalIssue, hmrcInternalHeader: HmrcInternalHeader)
-@(beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+
+@(beforeContentBlock: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 
 @customHeaderBlock = @{
 
