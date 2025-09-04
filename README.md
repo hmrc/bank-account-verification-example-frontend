@@ -7,6 +7,12 @@
 
 `bank-account-verification-acceptance-example` is our recommended solution for creating acceptance tests for a service that integrates with `bank-account-verification-frontend`.  Check it out on [Github](https://github.com/hmrc/bank-account-verification-acceptance-example).
 
+# Test Data
+
+Within test environments we use the [bank-account-reputation-third-parties-stub](https://github.com/hmrc/bank-account-reputation-third-parties-stub).
+
+Bank Account details that you can test with can be found here: [Test Bank Accounts](https://github.com/hmrc/bank-account-reputation-third-parties-stub/blob/main/conf/data/modulr-data.csv)
+
 # Running locally
 
 Start the services via service manager:
